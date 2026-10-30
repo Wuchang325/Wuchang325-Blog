@@ -98,6 +98,10 @@ export function getDefaultWallpaperMode(): WallpaperMode {
 }
 
 export function getStoredWallpaperMode(): WallpaperMode {
+	// 站点关闭背景模式切换时，忽略访客历史偏好，强制使用站点默认模式
+	if (siteConfig.displaySettings?.wallpaperMode === false) {
+		return getDefaultWallpaperMode();
+	}
 	const value = localStorage.getItem(WALLPAPER_MODE_KEY);
 	return isWallpaperMode(value) ? value : getDefaultWallpaperMode();
 }
@@ -115,6 +119,10 @@ export function getDefaultHue(): number {
 }
 
 export function getHue(): number {
+	// 站点锁定主题色相时，忽略访客历史偏好，强制使用站点默认色相
+	if (siteConfig.displaySettings?.hue === false) {
+		return getDefaultHue();
+	}
 	const stored = localStorage.getItem("hue");
 	return stored ? Number.parseInt(stored, 10) : getDefaultHue();
 }

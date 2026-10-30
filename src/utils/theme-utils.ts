@@ -75,11 +75,19 @@ export function isMcSpec(v: string): v is McSpec {
 }
 
 export function getStyle(): McStyle {
+	// 站点关闭配色风格切换时，忽略访客历史偏好，强制使用站点默认风格
+	if (siteConfig.displaySettings?.colorStyle === false) {
+		return getDefaultStyle() as McStyle;
+	}
 	const stored = localStorage.getItem(STYLE_KEY);
 	return stored && isMcStyle(stored) ? stored : (getDefaultStyle() as McStyle);
 }
 
 export function getSpec(): McSpec {
+	// 站点关闭 Color Spec 切换时，忽略访客历史偏好，强制使用站点默认规范
+	if (siteConfig.displaySettings?.colorSpec === false) {
+		return getDefaultSpec() as McSpec;
+	}
 	const stored = localStorage.getItem(SPEC_KEY);
 	return stored && isMcSpec(stored) ? stored : (getDefaultSpec() as McSpec);
 }

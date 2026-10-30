@@ -260,7 +260,9 @@ const stylePreviews = $derived(
 
 <div id="display-setting" class="float-panel float-panel-closed absolute transition-all w-80 max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain m3-scroll-contain {className}">
     <PanelStack>
-        <!-- 段一：主题配色（色相 + 风格九宫格 + Color Spec） -->
+        <!-- 段一：主题配色（色相 + 风格九宫格 + Color Spec）。
+             配色项全部锁定且没有可重置的偏离时整段不渲染，避免留下空段落。 -->
+        {#if displayConfig.hue || displayConfig.colorStyle || displayConfig.colorSpec || isDirty}
         <div class="p-4 flex flex-col gap-3">
             <div class="flex flex-row gap-2 items-center justify-between">
                 <div class="flex gap-2 font-bold text-lg text-[var(--on-surface)] transition relative ml-3">
@@ -271,6 +273,7 @@ const stylePreviews = $derived(
                         <Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
                     </button>
                 </div>
+                {#if displayConfig.hue || isDirty}
                 <div class="flex gap-1 items-center">
                     <!-- 当前色相值展示（段内用低一级容器色保持对比） -->
                     <div title={i18n(I18nKey.themeColor)}
@@ -282,8 +285,11 @@ const stylePreviews = $derived(
                     <div class="h-7 w-7 rounded-full" title={i18n(I18nKey.themeColor)}
                          style={`background: ${currentColor}; box-shadow: inset 0 0 0 1px var(--outline-variant)`}></div>
                 </div>
+                {/if}
             </div>
-            <Slider bind:value={hue} min={0} max={360} step={5} label={i18n(I18nKey.themeColor)} />
+            {#if displayConfig.hue}
+                <Slider bind:value={hue} min={0} max={360} step={5} label={i18n(I18nKey.themeColor)} />
+            {/if}
 
             {#if displayConfig.colorStyle}
                 <div class="flex flex-col gap-2 pt-1">
@@ -326,6 +332,7 @@ const stylePreviews = $derived(
                 </div>
             {/if}
         </div>
+        {/if}
 
         <!-- 段二：界面布局（页面背景 + 列表布局 + 背景纹理） -->
         {#if displayConfig.wallpaperMode || displayConfig.layoutMode || displayConfig.texture}
