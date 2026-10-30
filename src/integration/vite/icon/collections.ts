@@ -29,6 +29,7 @@ import {
 	readdirSync,
 	readFileSync,
 	renameSync,
+	rmSync,
 	writeFileSync,
 } from "node:fs";
 import { createRequire } from "node:module";
@@ -340,10 +341,29 @@ export function generateIconCollections({
 		"",
 	].join("\n");
 	// Write-then-rename so a dev server reading mid-write never sees a partial file.
-	const temporaryPath = `${outputPath}.tmp`;
-	mkdirSync(dirname(outputPath), { recursive: true });
-	writeFileSync(temporaryPath, output, "utf8");
-	renameSync(temporaryPath, outputPath);
+	//
+	// Two dev-only hazards are handled here, both of which turn into an infinite
+	// rebuild loop otherwise: `buildStart` runs on every rebuild, and every write
+	// to this file schedules the next rebuild.
+	//   1. Skip the write when the content is unchanged, so a rebuild that
+	//      regenerates the same collection settles instead of re-triggering.
+	//   2. On Windows the destination can be held open by the dev server while it
+	//      resolves the import, which makes `renameSync` fail with EPERM. Fall back
+	//      to an in-place write and drop the leftover `.tmp`, which would keep
+	//      firing watcher events on its own.
+	const unchanged =
+		existsSync(outputPath) && readFileSync(outputPath, "utf8") === output;
+	if (!unchanged) {
+		const temporaryPath = `${outputPath}.tmp`;
+		mkdirSync(dirname(outputPath), { recursive: true });
+		writeFileSync(temporaryPath, output, "utf8");
+		try {
+			renameSync(temporaryPath, outputPath);
+		} catch {
+			writeFileSync(outputPath, output, "utf8");
+			rmSync(temporaryPath, { force: true });
+		}
+	}
 
 	return collections.reduce(
 		(total, collection) =>
