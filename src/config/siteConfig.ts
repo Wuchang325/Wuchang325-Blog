@@ -66,8 +66,17 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// desktop 用于 >= 1024px；mobile 仅用于 < 1024px 的首页，手机非首页不显示壁纸。
 		// 数组顺序就是轮播顺序；只需要静态 Banner 时，每组保留一张图片即可。
 		src: {
-			desktop: ["assets/images/banner/desktop/1.webp"],
-			mobile: ["assets/images/banner/mobile/1.webp"],
+			desktop: [
+				"https://api.imlazy.ink/img",
+				//"assets/images/banner/desktop/1.webp",
+				//"assets/images/banner/desktop/2.webp",
+				//"assets/images/banner/desktop/3.webp",
+				//"assets/images/banner/desktop/4.webp",
+			],
+			mobile: [
+				"https://api.imlazy.ink/img-phone",
+				//"assets/images/banner/mobile/1.webp"
+			],
 		},
 		// 图片裁切焦点："top"、"center" 或 "bottom"。
 		position: "center",
@@ -125,7 +134,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	// Markdown 正文图片处理；仅匹配远程图片，不会产生额外网络请求或客户端代码。
 	imageOptimization: {
 		// 为需要防盗链兼容的图片 CDN 添加 referrerpolicy="no-referrer"，支持通配符。
-		noReferrerDomains: ["*.hdslb.com"],
+		noReferrerDomains: [],
 	},
 	toc: {
 		enable: true, // Display the table of contents on the right side of the post
