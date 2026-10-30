@@ -3,3 +3,22 @@
   需要在 src/config/footerConfig.ts 中保持 enable: true；
   内容将注入在页脚版权信息上方；若文件留空或仅保留注释，则不会产生任何额外的 DOM 结构。
 -->
+<div style="text-align: center; margin-bottom: 10px;">
+  <span>本站由 <a href="https://astro.build/">Astro</a> 驱动</span>
+  ·
+  <a href="/rss.xml">RSS 订阅</a>
+</div>
+<div style="text-align:center;font-size:0.85em;opacity:0.75;">
+  本站已运行
+  <span id="site-days">…</span>
+  天
+</div>
+<script>
+  const start = new Date("2026-10-30").getTime()
+  const el = document.getElementById("site-days")
+  const update = () => {
+    el.textContent = Math.floor((Date.now() - start) / 86400000)
+  }
+  update()
+  setInterval(update, 3600000)
+</script>
