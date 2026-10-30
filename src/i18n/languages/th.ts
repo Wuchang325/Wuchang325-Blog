@@ -330,4 +330,9 @@ export const th: Translation = {
 		"เพิ่ม URL ฟีดด้านบนลงในโปรแกรมอ่าน RSS/Atom (เช่น NetNewsWire, Feedly, Inoreader, Follow) เพื่อรับการแจ้งเตือนบทความใหม่",
 	[Key.feedOpenXml]: "ดู XML ต้นฉบับ",
 	[Key.feedRecentPosts]: "บทความล่าสุดในฟีด",
+
+	[Key.languageNoticeTitle]: "รองรับเฉพาะภาษาจีนตัวย่อ",
+	[Key.languageNoticeBody]:
+		"ภาษาของเบราว์เซอร์ของคุณคือ {language} เนื้อหาทั้งหมดจะแสดงเป็นภาษาจีนตัวย่อ",
+	[Key.languageNoticeDismiss]: "รับทราบ",
 };

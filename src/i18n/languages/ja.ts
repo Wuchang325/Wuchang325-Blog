@@ -342,4 +342,9 @@ export const ja: Translation = {
 		"上記の購読 URL をお好みの RSS/Atom リーダー（NetNewsWire、Feedly、Inoreader、Follow など）に登録すると、最新記事が通知されます。",
 	[Key.feedOpenXml]: "XML を直接表示",
 	[Key.feedRecentPosts]: "最新の配信記事",
+
+	[Key.languageNoticeTitle]: "簡体字中国語のみ対応",
+	[Key.languageNoticeBody]:
+		"ブラウザの言語は {language} です。コンテンツはすべて簡体字中国語で表示されます。",
+	[Key.languageNoticeDismiss]: "了解",
 };

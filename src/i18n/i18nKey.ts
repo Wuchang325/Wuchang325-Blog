@@ -333,6 +333,11 @@ enum I18nKey {
 	feedHowToUseDesc = "feedHowToUseDesc",
 	feedOpenXml = "feedOpenXml",
 	feedRecentPosts = "feedRecentPosts",
+
+	// Language notice（浏览器语言非中文时右上角提示）
+	languageNoticeTitle = "languageNoticeTitle",
+	languageNoticeBody = "languageNoticeBody",
+	languageNoticeDismiss = "languageNoticeDismiss",
 }
 
 export default I18nKey;

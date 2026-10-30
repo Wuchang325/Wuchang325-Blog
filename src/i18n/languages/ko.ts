@@ -342,4 +342,9 @@ export const ko: Translation = {
 		"위 주소를 선호하는 RSS/Atom 리더기(NetNewsWire, Feedly, Inoreader, Follow 등)에 등록하여 새 글 알림을 받아보세요.",
 	[Key.feedOpenXml]: "원본 XML 보기",
 	[Key.feedRecentPosts]: "피드 최신 글",
+
+	[Key.languageNoticeTitle]: "중국어 간체만 지원",
+	[Key.languageNoticeBody]:
+		"브라우저 언어는 {language}입니다. 모든 콘텐츠는 중국어 간체로 표시됩니다.",
+	[Key.languageNoticeDismiss]: "확인",
 };

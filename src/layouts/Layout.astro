@@ -1,6 +1,7 @@
 ---
 import { Font } from "astro:assets";
 import Snackbar from "@components/atoms/overlay/Snackbar.svelte";
+import LanguageNotice from "@components/organisms/LanguageNotice.svelte";
 import ConfigCarrier from "@components/system/ConfigCarrier.astro";
 import UmamiRuntime from "@components/system/UmamiRuntime.astro";
 import { resolveAsset } from "@utils/asset-utils";
@@ -86,6 +87,12 @@ const lightTheme =
 	expressiveCodeConfig.lightTheme ?? expressiveCodeConfig.theme;
 const darkTheme = expressiveCodeConfig.darkTheme ?? expressiveCodeConfig.theme;
 const defaultWallpaperMode = siteConfig.wallpaperMode.defaultMode;
+// 语言提示：站点只提供简体中文，非中文浏览器弹右上角提示（可在 siteConfig 关闭）
+const languageNoticeEnabled = siteConfig.languageNotice?.enable ?? true;
+// 主题色相被站点锁定时，首屏内联脚本不再读取访客历史偏好
+const hueLocked = siteConfig.displaySettings?.hue === false;
+// 背景模式被站点锁定时，首屏内联脚本不再读取访客历史偏好，避免闪一下旧模式
+const wallpaperModeLocked = siteConfig.displaySettings?.wallpaperMode === false;
 const textureOptions = resolveTextureOptions();
 const defaultTexturePreset = textureOptions.defaultPreset;
 const defaultTextureOpacity = textureOptions.defaultOpacity;
@@ -164,7 +171,7 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 			/>
 		))}
 
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, lightTheme, darkTheme, defaultWallpaperMode, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, hueLocked, lightTheme, darkTheme, defaultWallpaperMode, wallpaperModeLocked, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			let isDark = false;
 			switch (theme) {
@@ -185,13 +192,13 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 			}
 
 			document.documentElement.setAttribute('data-theme', isDark ? darkTheme : lightTheme);
-			const hue = localStorage.getItem('hue') || configHue;
+			const hue = hueLocked ? configHue : (localStorage.getItem('hue') || configHue);
 			document.documentElement.style.setProperty('--hue', hue);
 			if (localStorage.getItem('mc-motion') === 'reduced') {
 				document.documentElement.classList.add('motion-reduced');
 			}
 			const storedWallpaperMode = localStorage.getItem('wallpaper-mode');
-			const wallpaperMode = storedWallpaperMode === 'banner' || storedWallpaperMode === 'none'
+			const wallpaperMode = !wallpaperModeLocked && (storedWallpaperMode === 'banner' || storedWallpaperMode === 'none')
 				? storedWallpaperMode
 				: defaultWallpaperMode;
 			document.documentElement.dataset.wallpaperMode = wallpaperMode;
@@ -242,6 +249,7 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 			></div>
 		)}
 		<Snackbar client:only="svelte"></Snackbar>
+		{languageNoticeEnabled && <LanguageNotice client:only="svelte" />}
 		<slot />
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
 	</body>

@@ -346,4 +346,9 @@ export const tr: Translation = {
 		"Yeni yazı bildirimleri almak için yukarıdaki bağlantıyı dilediğiniz RSS/Atom okuyucusuna (NetNewsWire, Feedly, Inoreader, Follow vb.) ekleyin.",
 	[Key.feedOpenXml]: "Ham XML'i Görüntüle",
 	[Key.feedRecentPosts]: "Akıştaki Son Yazılar",
+
+	[Key.languageNoticeTitle]: "Yalnızca Basitleştirilmiş Çince",
+	[Key.languageNoticeBody]:
+		"Tarayıcı diliniz {language}. Tüm içerik Basitleştirilmiş Çince olarak gösterilir.",
+	[Key.languageNoticeDismiss]: "Anladım",
 };

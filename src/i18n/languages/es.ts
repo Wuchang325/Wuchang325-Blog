@@ -345,4 +345,9 @@ export const es: Translation = {
 		"Añade esta URL a tu lector RSS/Atom favorito (como NetNewsWire, Feedly, Inoreader o Follow) para recibir actualizaciones.",
 	[Key.feedOpenXml]: "Ver XML original",
 	[Key.feedRecentPosts]: "Artículos recientes del canal",
+
+	[Key.languageNoticeTitle]: "Solo chino simplificado",
+	[Key.languageNoticeBody]:
+		"El idioma de tu navegador es {language}. Todo el contenido se muestra en chino simplificado.",
+	[Key.languageNoticeDismiss]: "Entendido",
 };
