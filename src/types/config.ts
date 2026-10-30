@@ -8,6 +8,8 @@ export type WallpaperMode = "banner" | "none";
 export type TopAppBarContentAlign = "left" | "center";
 
 export type DisplaySettingsConfig = {
+	/** 是否在显示设置面板展示主题色相（0-360）滑块（默认 true） */
+	hue?: boolean;
 	/** 是否在显示设置面板展示配色风格（9 宫格）选择器（默认 true） */
 	colorStyle?: boolean;
 	/** 是否在显示设置面板展示 Color Spec（调色规范 2021 / 2025）切换器（默认 true） */
@@ -89,6 +91,12 @@ export type SiteConfig = {
 
 	/** 显示设置浮层各切换项的前端可见性控制 */
 	displaySettings?: DisplaySettingsConfig;
+
+	/** 右上角语言提示：访客浏览器首选语言非中文时，提示本站仅提供简体中文 */
+	languageNotice?: {
+		/** 是否启用（默认 true）。关闭时不渲染组件，也不产生任何客户端脚本 */
+		enable?: boolean;
+	};
 
 	lang:
 		| "en"

@@ -10,29 +10,37 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  * 类型见 src/types/config.ts。
  */
 export const siteConfig: SiteConfig = withUserConfig("site", {
-	site: "https://shirone.mysqil.com/",
+	site: "https://blog.zient.top/",
 	base: "/",
-	title: "Shirone",
-	subtitle: "A Material 3 anime blog",
+	title: "无常の小窝",
+	subtitle: "无常的个人博客，记录生活点滴与技术笔记",
 	// 电脑端顶栏标题与导航内容区域："left" 左对齐，"center" 居中。
 	topAppBar: {
 		contentAlign: "center",
 	},
 	// 显示设置面板控制：配置各项前端切换项的可见性（默认全部开启）。
+	// 关闭某项后，面板中不再渲染该项，同时该维度会忽略访客浏览器中已有的历史偏好，
+	// 强制回落到下方的站点配置值（不是单纯隐藏 UI）。
 	displaySettings: {
-		colorStyle: true, // 是否展示配色风格 9 宫格
-		colorSpec: true, // 是否展示 Color Spec 调色规范切换
-		wallpaperMode: true, // 是否展示页面背景（纯色/横幅）切换
+		hue: false, // 是否展示主题色相（0-360）滑块
+		colorStyle: false, // 是否展示配色风格 9 宫格
+		colorSpec: false, // 是否展示 Color Spec 调色规范切换
+		wallpaperMode: false, // 是否展示页面背景（纯色/横幅）切换
 		layoutMode: true, // 是否展示文章列表布局（列表/网格）切换
 		reduceMotion: true, // 是否展示减少动效切换
 		texture: true, // 是否展示背景纹理选择
 	},
-	lang: "en", // Language code, e.g. 'en', 'zh_CN', 'ja', etc.
+	// 右上角语言提示：站点只提供简体中文，访客浏览器首选语言非中文时弹一次提示。
+	// 关闭后不渲染组件、不产生任何客户端脚本。
+	languageNotice: {
+		enable: true,
+	},
+	lang: "zh_CN", // Language code, e.g. 'en', 'zh_CN', 'ja', etc.
 	// IANA time zone for precise post and moment timestamps. It is independent of lang.
 	timeZone: "Asia/Shanghai",
 	themeColor: {
-		hue: 315, // Default hue 0-360. 站点设计默认粉紫（偏二次元）；262 紫 / 345 粉 也可选
-		fixed: false, // Hide the theme color picker for visitors
+		hue: 300, // Default hue 0-360. 站点设计默认粉紫（偏二次元）；262 紫 / 345 粉 也可选
+		fixed: false, // 隐藏整个「显示设置」入口按钮（会连带隐藏布局/纹理/动效设置）；只想锁色相请用 displaySettings.hue
 		// Dynamic Material 3 palette style (TonalSpot/Vibrant/Content/Expressive/Rainbow/FruitSalad/Monochrome/Neutral/Fidelity)
 		style: "tonalSpot",
 		// Design spec version: "2021" (MD3) or "2025" (M3 Expressive)。角色集一致，
@@ -40,7 +48,8 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		spec: "2025",
 	},
 	// 默认页面背景模式："banner" 使用壁纸横幅，"none" 使用主题纯色。
-	// 访客在“显示设置”中的选择会保存在浏览器中，并覆盖这里的默认值。
+	// displaySettings.wallpaperMode 为 true 时，访客选择会保存在浏览器中并覆盖此默认值；
+	// 为 false 时锁定为此值，访客无法更改。
 	wallpaperMode: {
 		defaultMode: "banner",
 	},
@@ -70,13 +79,20 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		homeText: {
 			// 仅在首页 Banner 中显示，标题与副标题会上下居中排列。
 			enable: true,
-			title: "Shirone",
+			title: "无常の小窝",
 			subtitle: [
-				"特別なことはないけど、君がいると十分です",
-				"今でもあなたは私の光",
-				"君ってさ、知らないうちに私の毎日になってたよ",
-				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
-				"今日はなんでもない日。でも、ちょっとだけいい日",
+				"没有特别的事，但有你在就足够了",
+				"至今你依然是我的光",
+				"你啊，不知不觉间已经成了我的日常",
+				"和你聊天，总觉得每天都会变得稍微开心一点",
+				"今天是个平凡的日子。不过，是稍微有点好的日子",
+				"不需要什么主角光环，有你在的日常就是最好的故事",
+				"你不是路人角色，你故事里的主角就是你",
+				"今天什么都没发生。但和你说上了话，所以是稍微不错的一天",
+				"慢一点也没关系，勇者也是从新手村一步步走出来的",
+				"你的光只是你自己看不见，其实早就照到大家了",
+				"跌倒了也没关系，下一话再站起来就好",
+				"平凡的一天，只要好好撑过来了，就已经很了不起了",
 			],
 			typewriter: {
 				// 副标题逐字显示；关闭后直接显示完整副标题。
@@ -113,7 +129,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 	},
 	toc: {
 		enable: true, // Display the table of contents on the right side of the post
-		depth: 2, // Maximum heading depth to show in the table, from 1 to 3
+		depth: 3, // Maximum heading depth to show in the table, from 1 to 3
 	},
 	progressIndicator: {
 		// 进度条预设样式：dual 双向扫描（官方默认双线）/ single 单向扫描（单线）
@@ -181,6 +197,7 @@ export function getDefaultSpec(): string {
 
 /** 解析并返回显示设置面板各项开关（未配置时默认 true） */
 export function resolveDisplaySettings(): {
+	hue: boolean;
 	colorStyle: boolean;
 	colorSpec: boolean;
 	wallpaperMode: boolean;
@@ -194,6 +211,7 @@ export function resolveDisplaySettings(): {
 		cfg?.texture ?? true,
 	);
 	return {
+		hue: cfg?.hue ?? true,
 		colorStyle: cfg?.colorStyle ?? true,
 		colorSpec: cfg?.colorSpec ?? true,
 		wallpaperMode: cfg?.wallpaperMode ?? true,
