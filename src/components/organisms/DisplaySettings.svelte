@@ -262,7 +262,7 @@ const stylePreviews = $derived(
     <PanelStack>
         <!-- 段一：主题配色（色相 + 风格九宫格 + Color Spec）。
              配色项全部锁定且没有可重置的偏离时整段不渲染，避免留下空段落。 -->
-        {#if displayConfig.hue || displayConfig.colorStyle || displayConfig.colorSpec || isDirty}
+        {#if displayConfig.hue || displayConfig.colorStyle || displayConfig.colorSpec}
         <div class="p-4 flex flex-col gap-3">
             <div class="flex flex-row gap-2 items-center justify-between">
                 <div class="flex gap-2 font-bold text-lg text-[var(--on-surface)] transition relative ml-3">
@@ -273,7 +273,7 @@ const stylePreviews = $derived(
                         <Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
                     </button>
                 </div>
-                {#if displayConfig.hue || isDirty}
+                {#if displayConfig.hue}
                 <div class="flex gap-1 items-center">
                     <!-- 当前色相值展示（段内用低一级容器色保持对比） -->
                     <div title={i18n(I18nKey.themeColor)}
