@@ -63,6 +63,7 @@ public/assets/moments/thumbnails/*
 .zcode/
 .codex-*.log
 research/
+.workbuddy-ai/
 
 # playwright
 .playwright-cli/
