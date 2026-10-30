@@ -56,12 +56,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:auto-awesome-outline-rounded",
 		pageKey: "moments",
 	},
-	/*Anime: {
+	Anime: {
 		name: i18n(I18nKey.anime),
 		url: "/anime/",
 		icon: "material-symbols:live-tv-outline-rounded",
 		pageKey: "anime",
-	},*/
+	},
 	Compass: {
 		name: i18n(I18nKey.compass),
 		url: "/compass/",
@@ -143,6 +143,7 @@ const defaultNavBarConfig: NavBarConfig = {
 		LinkPresets.Archive,
 		LinkPresets.Friends,
 		LinkPresets.Moments,
+		LinkPresets.Anime,
 		LinkPresets.Compass,
 		LinkPresets.Albums,
 		{
@@ -154,6 +155,7 @@ const defaultNavBarConfig: NavBarConfig = {
 				LinkPresets.Devices,
 				LinkPresets.Games,
 				LinkPresets.Skills,
+				LinkPresets.Anime,
 				// 分类/标签入口不进导航菜单（避免菜单项过多），预设已登记指向独立页面，
 				// 需要时取消注释即可
 				// LinkPresets.Categories,
