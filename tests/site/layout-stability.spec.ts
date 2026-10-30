@@ -152,20 +152,32 @@ function expectStableGeometry(samples: GeometrySample[], label: string) {
 	).toHaveLength(1);
 }
 
-async function openSolidPage(page: Page, path: string) {
+/**
+ * 以纯色背景（wallpaper-mode = none）打开页面。
+ * 返回 false 表示站点已锁定页面背景模式，调用方应跳过该用例。
+ */
+async function openSolidPage(page: Page, path: string): Promise<boolean> {
 	await page.addInitScript(() =>
 		localStorage.setItem("wallpaper-mode", "none"),
 	);
 	await page.goto(path, { waitUntil: "domcontentloaded" });
 	await waitForLayoutReady(page);
+	const solid = await page.evaluate(
+		() => document.documentElement.dataset.wallpaperMode === "none",
+	);
+	if (!solid) return false;
 	await page.waitForFunction(() => Boolean(window.swup?.navigate));
+	return true;
 }
 
 test.describe("Layout width stability", () => {
 	test("keeps one layout width whether or not the page scrolls", async ({
 		page,
 	}) => {
-		await openSolidPage(page, SHORT_PAGE);
+		test.skip(
+			!(await openSolidPage(page, SHORT_PAGE)),
+			"站点已锁定页面背景模式，跳过纯色背景用例",
+		);
 		test.skip(
 			!(await fitsViewport(page)),
 			`${SHORT_PAGE} 现在比视口高，缺少「短页」这一前提`,
@@ -198,7 +210,10 @@ test.describe("Layout width stability", () => {
 	test("keeps #main-grid width stable across long/short Swup navigation", async ({
 		page,
 	}) => {
-		await openSolidPage(page, SHORT_PAGE);
+		test.skip(
+			!(await openSolidPage(page, SHORT_PAGE)),
+			"站点已锁定页面背景模式，跳过纯色背景用例",
+		);
 		test.skip(
 			!(await fitsViewport(page)),
 			`${SHORT_PAGE} 现在比视口高，缺少「短页」这一前提`,
@@ -221,7 +236,10 @@ test.describe("Layout width stability", () => {
 	test("keeps the layout width when the wallpaper mode switches", async ({
 		page,
 	}) => {
-		await openSolidPage(page, SHORT_PAGE);
+		test.skip(
+			!(await openSolidPage(page, SHORT_PAGE)),
+			"站点已锁定页面背景模式，跳过纯色背景用例",
+		);
 		const solid = await readGridGeometry(page);
 
 		await page.evaluate(() => {
@@ -253,7 +271,10 @@ test.describe("Layout width stability", () => {
 	test("keeps the layout width while the page scroll is locked", async ({
 		page,
 	}) => {
-		await openSolidPage(page, LONG_PAGE);
+		test.skip(
+			!(await openSolidPage(page, LONG_PAGE)),
+			"站点已锁定页面背景模式，跳过纯色背景用例",
+		);
 		test.skip(
 			!(await hasVerticalScrollbar(page)),
 			"当前浏览器没有可测量的经典滚动条",
@@ -291,7 +312,10 @@ test.describe("Layout width stability", () => {
 	test("compensates the scrollbar width when the root scrollbar is removed", async ({
 		page,
 	}) => {
-		await openSolidPage(page, LONG_PAGE);
+		test.skip(
+			!(await openSolidPage(page, LONG_PAGE)),
+			"站点已锁定页面背景模式，跳过纯色背景用例",
+		);
 		test.skip(
 			!(await hasVerticalScrollbar(page)),
 			"当前浏览器没有可测量的经典滚动条",

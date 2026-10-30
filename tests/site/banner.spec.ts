@@ -498,6 +498,12 @@ test.describe("banner wallpaper", () => {
 		});
 
 		await page.goto("/", { waitUntil: "domcontentloaded" });
+		test.skip(
+			(await page.evaluate(
+				() => document.documentElement.dataset.wallpaperMode,
+			)) !== "none",
+			"站点已锁定页面背景模式，跳过纯色背景用例",
+		);
 		await waitForBannerState(page, false);
 		await expect(page.locator("#banner-wrapper")).toBeHidden();
 		await expect(page.locator(".banner-waves")).toBeHidden();
@@ -512,7 +518,13 @@ test.describe("banner wallpaper", () => {
 		await page.goto("/", { waitUntil: "domcontentloaded" });
 		await waitForBannerState(page, true);
 		await page.locator("#display-settings-switch").click();
-		await page.getByText("Solid", { exact: true }).click();
+		const solidOption = page.getByText("Solid", { exact: true });
+		// 站点锁定页面背景时（displaySettings.wallpaperMode = false）面板不渲染该控件
+		test.skip(
+			(await solidOption.count()) === 0,
+			"站点已锁定页面背景模式，跳过切换测试",
+		);
+		await solidOption.click();
 		await waitForBannerState(page, false);
 		expect(
 			await page.evaluate(() => localStorage.getItem("wallpaper-mode")),
