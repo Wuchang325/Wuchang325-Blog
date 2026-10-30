@@ -56,12 +56,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:auto-awesome-outline-rounded",
 		pageKey: "moments",
 	},
-	Anime: {
+	/*Anime: {
 		name: i18n(I18nKey.anime),
 		url: "/anime/",
 		icon: "material-symbols:live-tv-outline-rounded",
 		pageKey: "anime",
-	},
+	},*/
 	Compass: {
 		name: i18n(I18nKey.compass),
 		url: "/compass/",
@@ -143,7 +143,6 @@ const defaultNavBarConfig: NavBarConfig = {
 		LinkPresets.Archive,
 		LinkPresets.Friends,
 		LinkPresets.Moments,
-		LinkPresets.Anime,
 		LinkPresets.Compass,
 		LinkPresets.Albums,
 		{
