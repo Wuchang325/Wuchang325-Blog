@@ -284,6 +284,11 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 		background: white;
 	}
 
+	/* 导航项 hover/focus 状态层跟随圆角（.m3-state-layer::before 用 border-radius: inherit） */
+	.top-app-bar__nav-link {
+		border-radius: var(--shape-corner-m);
+	}
+
 	.top-app-bar__nav-link--active {
 		color: var(--primary);
 	}
