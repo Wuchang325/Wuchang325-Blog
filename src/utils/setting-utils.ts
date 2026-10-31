@@ -1,8 +1,14 @@
 import {
 	AUTO_MODE,
+	CONSTELLATION_CHANGE_EVENT,
+	CONSTELLATION_KEY,
+	CURSOR_SKIN_CHANGE_EVENT,
+	CURSOR_SKIN_KEY,
 	DARK_MODE,
 	DEFAULT_THEME,
 	LIGHT_MODE,
+	MOUSE_EFFECT_CHANGE_EVENT,
+	MOUSE_EFFECT_KEY,
 	TEXTURE_CHANGE_EVENT,
 	TEXTURE_OPACITY_KEY,
 	TEXTURE_PRESET_KEY,
@@ -12,7 +18,13 @@ import {
 	WALLPAPER_MODE_KEY,
 } from "@constants/constants.ts";
 import { applyCurrentScheme } from "@utils/theme-utils";
-import { expressiveCodeConfig, siteConfig } from "@/config";
+import {
+	expressiveCodeConfig,
+	resolveConstellationOptions,
+	resolveCursorOptions,
+	resolveMouseEffectOptions,
+	siteConfig,
+} from "@/config";
 import type { LIGHT_DARK_MODE, WallpaperMode } from "@/types/config";
 import type { TexturePreset } from "@/types/textureConfig";
 
@@ -111,6 +123,67 @@ export function setWallpaperMode(mode: WallpaperMode): void {
 	document.documentElement.dataset.wallpaperMode = mode;
 	window.dispatchEvent(
 		new CustomEvent(WALLPAPER_MODE_CHANGE_EVENT, { detail: { mode } }),
+	);
+}
+
+/** 站点默认是否启用自定义指针（受 cursor.enable 与 skin 共同决定） */
+export function getDefaultCursorEnabled(): boolean {
+	return resolveCursorOptions().enable;
+}
+
+/** 访客偏好优先；未存过则回落到站点默认 */
+export function getStoredCursorEnabled(): boolean {
+	const value = localStorage.getItem(CURSOR_SKIN_KEY);
+	if (value === "on") return true;
+	if (value === "off") return false;
+	return getDefaultCursorEnabled();
+}
+
+export function setCursorEnabled(enabled: boolean): void {
+	localStorage.setItem(CURSOR_SKIN_KEY, enabled ? "on" : "off");
+	document.documentElement.dataset.cursorSkin = enabled ? "on" : "off";
+	window.dispatchEvent(
+		new CustomEvent(CURSOR_SKIN_CHANGE_EVENT, { detail: { enabled } }),
+	);
+}
+
+/** 站点默认是否启用鼠标拖尾 */
+export function getDefaultMouseEffectEnabled(): boolean {
+	return resolveMouseEffectOptions().enable;
+}
+
+export function getStoredMouseEffectEnabled(): boolean {
+	const value = localStorage.getItem(MOUSE_EFFECT_KEY);
+	if (value === "on") return true;
+	if (value === "off") return false;
+	return getDefaultMouseEffectEnabled();
+}
+
+export function setMouseEffectEnabled(enabled: boolean): void {
+	localStorage.setItem(MOUSE_EFFECT_KEY, enabled ? "on" : "off");
+	document.documentElement.dataset.mouseEffect = enabled ? "on" : "off";
+	window.dispatchEvent(
+		new CustomEvent(MOUSE_EFFECT_CHANGE_EVENT, { detail: { enabled } }),
+	);
+}
+
+/** 站点默认是否启用连线粒子背景 */
+export function getDefaultConstellationEnabled(): boolean {
+	return resolveConstellationOptions().enable;
+}
+
+export function getStoredConstellationEnabled(): boolean {
+	const value = localStorage.getItem(CONSTELLATION_KEY);
+	if (value === "on") return true;
+	if (value === "off") return false;
+	return getDefaultConstellationEnabled();
+}
+
+export function setConstellationEnabled(enabled: boolean): void {
+	localStorage.setItem(CONSTELLATION_KEY, enabled ? "on" : "off");
+	document.documentElement.dataset.constellation = enabled ? "on" : "off";
+	window.dispatchEvent(
+		new CustomEvent(CONSTELLATION_CHANGE_EVENT, { detail: { enabled } }),
 	);
 }
 

@@ -332,6 +332,9 @@ export const id: Translation = {
 	[Key.texturePresetGeometric]: "Geometris",
 	[Key.texturePresetSakura]: "Kelopak sakura",
 	[Key.textureOpacity]: "Intensitas tekstur",
+	[Key.cursorSkin]: "Kursor khusus",
+	[Key.mouseEffect]: "Jejak kursor",
+	[Key.constellation]: "Partikel konstelasi",
 	[Key.resetConfirmTitle]: "Atur ulang tema?",
 	[Key.resetConfirmMessage]:
 		"Hue, gaya warna, dan spesifikasi warna akan dikembalikan ke bawaan.",

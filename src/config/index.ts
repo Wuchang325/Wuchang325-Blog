@@ -66,7 +66,10 @@ export { sidebarConfig } from "./sidebarConfig";
 export {
 	getDefaultSpec,
 	getDefaultStyle,
+	resolveConstellationOptions,
+	resolveCursorOptions,
 	resolveDisplaySettings,
+	resolveMouseEffectOptions,
 	resolveTextureOptions,
 	siteConfig,
 } from "./siteConfig";

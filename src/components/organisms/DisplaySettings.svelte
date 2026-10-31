@@ -22,16 +22,25 @@ import {
 	resolveScheme,
 } from "@utils/mc-utils";
 import {
+	getDefaultConstellationEnabled,
+	getDefaultCursorEnabled,
 	getDefaultHue,
+	getDefaultMouseEffectEnabled,
 	getDefaultTextureOpacity,
 	getDefaultTexturePreset,
 	getHue,
 	getMotionPreference,
+	getStoredConstellationEnabled,
+	getStoredCursorEnabled,
+	getStoredMouseEffectEnabled,
 	getStoredTextureOpacity,
 	getStoredTexturePreset,
 	getStoredWallpaperMode,
+	setConstellationEnabled,
+	setCursorEnabled,
 	setHue,
 	setMotionPreference,
+	setMouseEffectEnabled,
 	setTextureOpacity,
 	setTexturePreset,
 	setWallpaperMode,
@@ -81,6 +90,16 @@ const defaultTextureOpacity = getDefaultTextureOpacity();
 let texturePreset = $state<TexturePreset>(getStoredTexturePreset());
 let lastAppliedTexturePreset = texturePreset;
 let textureOpacity = $state<number>(getStoredTextureOpacity());
+
+// 鼠标体验：自定义指针皮肤与 canvas 拖尾，两者独立开关
+const defaultCursorEnabled = getDefaultCursorEnabled();
+const defaultMouseEffectEnabled = getDefaultMouseEffectEnabled();
+let cursorEnabled = $state(getStoredCursorEnabled());
+let mouseEffectEnabled = $state(getStoredMouseEffectEnabled());
+
+// 连线粒子背景
+const defaultConstellationEnabled = getDefaultConstellationEnabled();
+let constellationEnabled = $state(getStoredConstellationEnabled());
 
 const textureOptions: {
 	value: TexturePreset;
@@ -157,6 +176,9 @@ function confirmReset() {
 	wallpaperMode = defaultWallpaperMode;
 	texturePreset = defaultTexturePreset;
 	textureOpacity = defaultTextureOpacity;
+	cursorEnabled = defaultCursorEnabled;
+	mouseEffectEnabled = defaultMouseEffectEnabled;
+	constellationEnabled = defaultConstellationEnabled;
 }
 
 /** 是否有可重置的偏离（控制 Reset 按钮可见性） */
@@ -167,7 +189,10 @@ const isDirty = $derived(
 		postListMode !== defaultLayoutMode ||
 		wallpaperMode !== defaultWallpaperMode ||
 		texturePreset !== defaultTexturePreset ||
-		textureOpacity !== defaultTextureOpacity,
+		textureOpacity !== defaultTextureOpacity ||
+		cursorEnabled !== defaultCursorEnabled ||
+		mouseEffectEnabled !== defaultMouseEffectEnabled ||
+		constellationEnabled !== defaultConstellationEnabled,
 );
 
 $effect(() => {
@@ -194,6 +219,15 @@ $effect(() => {
 });
 $effect(() => {
 	setTextureOpacity(textureOpacity);
+});
+$effect(() => {
+	setCursorEnabled(cursorEnabled);
+});
+$effect(() => {
+	setMouseEffectEnabled(mouseEffectEnabled);
+});
+$effect(() => {
+	setConstellationEnabled(constellationEnabled);
 });
 $effect(() => {
 	if (postListMode === lastAppliedMode) return;
@@ -391,13 +425,47 @@ const stylePreviews = $derived(
         {/if}
 
         <!-- 段三：动效与体验 -->
-        {#if displayConfig.reduceMotion}
-            <div class="p-4 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <Icon icon="material-symbols:motion-photos-off" class="text-lg text-[var(--primary)]" />
-                    <span class="text-sm font-bold text-[var(--on-surface)]">{i18n(I18nKey.reduceMotion)}</span>
-                </div>
-                <Switch bind:checked={motionReduced} label={i18n(I18nKey.reduceMotion)} icons />
+        {#if displayConfig.reduceMotion || displayConfig.cursor || displayConfig.mouseEffect || displayConfig.constellation}
+            <div class="p-4 flex flex-col gap-3">
+                {#if displayConfig.reduceMotion}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <Icon icon="material-symbols:motion-photos-off" class="text-lg text-[var(--primary)]" />
+                            <span class="text-sm font-bold text-[var(--on-surface)]">{i18n(I18nKey.reduceMotion)}</span>
+                        </div>
+                        <Switch bind:checked={motionReduced} label={i18n(I18nKey.reduceMotion)} icons />
+                    </div>
+                {/if}
+
+                {#if displayConfig.cursor}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <Icon icon="material-symbols:mouse-outline-rounded" class="text-lg text-[var(--primary)]" />
+                            <span class="text-sm font-bold text-[var(--on-surface)]">{i18n(I18nKey.cursorSkin)}</span>
+                        </div>
+                        <Switch bind:checked={cursorEnabled} label={i18n(I18nKey.cursorSkin)} icons />
+                    </div>
+                {/if}
+
+                {#if displayConfig.mouseEffect}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <Icon icon="material-symbols:auto-awesome-motion" class="text-lg text-[var(--primary)]" />
+                            <span class="text-sm font-bold text-[var(--on-surface)]">{i18n(I18nKey.mouseEffect)}</span>
+                        </div>
+                        <Switch bind:checked={mouseEffectEnabled} label={i18n(I18nKey.mouseEffect)} icons />
+                    </div>
+                {/if}
+
+                {#if displayConfig.constellation}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <Icon icon="material-symbols:scatter-plot-outline-rounded" class="text-lg text-[var(--primary)]" />
+                            <span class="text-sm font-bold text-[var(--on-surface)]">{i18n(I18nKey.constellation)}</span>
+                        </div>
+                        <Switch bind:checked={constellationEnabled} label={i18n(I18nKey.constellation)} icons />
+                    </div>
+                {/if}
             </div>
         {/if}
     </PanelStack>

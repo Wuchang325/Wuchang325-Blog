@@ -1,5 +1,14 @@
 import type { SiteConfig } from "@/types/config";
 import type {
+	ConstellationConfig,
+	ResolvedConstellationOptions,
+} from "@/types/constellationConfig";
+import type { CursorConfig, ResolvedCursorOptions } from "@/types/cursorConfig";
+import type {
+	MouseEffectConfig,
+	ResolvedMouseEffectOptions,
+} from "@/types/mouseEffectConfig";
+import type {
 	ResolvedTextureOptions,
 	TextureConfig,
 } from "@/types/textureConfig";
@@ -59,6 +68,38 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		defaultPreset: "starlight", // 默认纹理预设："none" | "starlight" | "cyber-dots" | "topography" | "geometric" | "sakura"
 		defaultOpacity: 0.12, // 默认纹理浓度 (0.05 ~ 0.25)
 		allowMotion: true, // 是否允许背景微动效（开启 reduced-motion 时自动静止）
+	},
+	// 自定义鼠标指针皮肤（内置 32×32 八帧序列，来自 Windows .ani 光标包逐帧导出）
+	cursor: {
+		enable: true, // 是否启用自定义指针（关闭后完全回退系统光标）
+		skin: "sakura", // 皮肤名；"none" 等价于关闭
+		animate: true, // 是否播放八帧动画（关闭时只显示首帧，零定时器）
+		speed: 1, // 动画速度倍率 (0.25 ~ 4)
+		hotspot: [1, 1], // 热点坐标 [x, y]，箭头尖端
+	},
+	// 鼠标拖尾粒子效果（canvas 流星拖尾 + 点击冲击波）
+	mouseEffect: {
+		enable: true, // 是否启用（关闭时零 canvas、零 rAF、零监听）
+		color: "theme", // "theme" 跟随 --primary；也可写 "45,175,255" 形式的 RGB 三元组
+		scale: 1.5, // 整体缩放 (0.5 ~ 3)
+		opacity: 1, // 不透明度 (0.1 ~ 1)
+		speed: 1, // 播放速度 (0.2 ~ 3)
+		maxTrail: 16, // 拖尾保留的历史点数 (4 ~ 32)
+		alwaysTrail: true, // 不按下鼠标也持续拖尾
+		clickBurst: true, // 点击时产生冲击波与爆散粒子
+		glow: 3, // 拖尾描边发光半径 (0 ~ 8)
+	},
+	// 连线粒子背景（自研轻量引擎，粒子漂浮 + 距离连线 + 鼠标排斥）
+	constellation: {
+		enable: true, // 是否启用（关闭时零 canvas、零 rAF、零监听）
+		count: 64, // 粒子数量 (12 ~ 160)
+		maxDistance: 150, // 连线距离阈值，像素 (60 ~ 260)
+		speed: 0.4, // 漂浮速度倍率 (0 ~ 2)
+		opacity: 0.55, // 整体不透明度 (0.05 ~ 1)
+		color: "theme", // "theme" 跟随 --primary；也可写 "45,175,255"
+		repelRadius: 140, // 鼠标排斥半径，像素 (0 ~ 400；0 表示不排斥)
+		repelForce: 0.6, // 排斥强度 (0 ~ 2)
+		lineWidth: 1, // 连线宽度 (0.4 ~ 3)
 	},
 	banner: {
 		// 推荐将图片放入 src/assets，并填写相对 src 的路径，以启用构建期 AVIF/WebP 响应式优化。
@@ -194,6 +235,158 @@ export function resolveTextureOptions(
 	};
 }
 
+/** 数值钳制：非有限值一律回退到默认值 */
+function clampNumber(
+	value: unknown,
+	min: number,
+	max: number,
+	fallback: number,
+): number {
+	const n = typeof value === "number" ? value : Number(value);
+	if (!Number.isFinite(n)) return fallback;
+	return Math.min(Math.max(n, min), max);
+}
+
+/**
+ * 解析并返回自定义鼠标指针配置。
+ *
+ * 关闭短路：`enable: false` 或 `skin: "none"` 时返回 `enable: false`，
+ * 调用方据此不注入任何 cursor 规则、不启动帧定时器。
+ */
+export function resolveCursorOptions(
+	config: boolean | CursorConfig | undefined = siteConfig.cursor,
+	displaySettingsCursor: boolean = siteConfig.displaySettings?.cursor ?? true,
+): ResolvedCursorOptions {
+	const defaults: ResolvedCursorOptions = {
+		enable: false,
+		skin: "none",
+		animate: false,
+		speed: 1,
+		hotspot: [1, 1],
+	};
+
+	if (config === false || config === undefined) return defaults;
+	if (config === true) {
+		return {
+			enable: displaySettingsCursor,
+			skin: "sakura",
+			animate: true,
+			speed: 1,
+			hotspot: [1, 1],
+		};
+	}
+
+	const skin = config.skin ?? "sakura";
+	const hotspot = config.hotspot;
+	const validHotspot =
+		Array.isArray(hotspot) &&
+		hotspot.length === 2 &&
+		Number.isFinite(hotspot[0]) &&
+		Number.isFinite(hotspot[1]);
+
+	return {
+		enable: (config.enable ?? true) && skin !== "none",
+		skin,
+		animate: config.animate ?? true,
+		speed: clampNumber(config.speed, 0.25, 4, 1),
+		hotspot: validHotspot
+			? ([Math.max(0, hotspot[0]), Math.max(0, hotspot[1])] as const)
+			: ([1, 1] as const),
+	};
+}
+
+/**
+ * 解析并返回鼠标拖尾粒子效果配置。
+ *
+ * 关闭短路：`enable: false` 时返回 `enable: false`，调用方不渲染 canvas，
+ * 效果组件因此完全不进入客户端包。
+ */
+export function resolveMouseEffectOptions(
+	config: boolean | MouseEffectConfig | undefined = siteConfig.mouseEffect,
+	displaySettingsMouseEffect: boolean = siteConfig.displaySettings
+		?.mouseEffect ?? true,
+): ResolvedMouseEffectOptions {
+	const defaults: ResolvedMouseEffectOptions = {
+		enable: false,
+		color: "theme",
+		scale: 1.5,
+		opacity: 1,
+		speed: 1,
+		maxTrail: 16,
+		alwaysTrail: true,
+		clickBurst: true,
+		glow: 3,
+	};
+
+	if (config === false || config === undefined) return defaults;
+	if (config === true) {
+		return { ...defaults, enable: displaySettingsMouseEffect };
+	}
+
+	const color =
+		typeof config.color === "string" && config.color.trim()
+			? config.color.trim()
+			: "theme";
+
+	return {
+		enable: config.enable ?? true,
+		color,
+		scale: clampNumber(config.scale, 0.5, 3, 1.5),
+		opacity: clampNumber(config.opacity, 0.1, 1, 1),
+		speed: clampNumber(config.speed, 0.2, 3, 1),
+		maxTrail: Math.round(clampNumber(config.maxTrail, 4, 32, 16)),
+		alwaysTrail: config.alwaysTrail ?? true,
+		clickBurst: config.clickBurst ?? true,
+		glow: clampNumber(config.glow, 0, 8, 3),
+	};
+}
+
+/**
+ * 解析并返回连线粒子背景配置。
+ *
+ * 关闭短路：`enable: false` 时返回 `enable: false`，调用方不渲染 canvas，
+ * 组件因此完全不进入客户端包。
+ */
+export function resolveConstellationOptions(
+	config: boolean | ConstellationConfig | undefined = siteConfig.constellation,
+	displaySettingsConstellation: boolean = siteConfig.displaySettings
+		?.constellation ?? true,
+): ResolvedConstellationOptions {
+	const defaults: ResolvedConstellationOptions = {
+		enable: false,
+		count: 64,
+		maxDistance: 150,
+		speed: 0.4,
+		opacity: 0.55,
+		color: "theme",
+		repelRadius: 140,
+		repelForce: 0.6,
+		lineWidth: 1,
+	};
+
+	if (config === false || config === undefined) return defaults;
+	if (config === true) {
+		return { ...defaults, enable: displaySettingsConstellation };
+	}
+
+	const color =
+		typeof config.color === "string" && config.color.trim()
+			? config.color.trim()
+			: "theme";
+
+	return {
+		enable: config.enable ?? true,
+		count: Math.round(clampNumber(config.count, 12, 160, 64)),
+		maxDistance: clampNumber(config.maxDistance, 60, 260, 150),
+		speed: clampNumber(config.speed, 0, 2, 0.4),
+		opacity: clampNumber(config.opacity, 0.05, 1, 0.55),
+		color,
+		repelRadius: clampNumber(config.repelRadius, 0, 400, 140),
+		repelForce: clampNumber(config.repelForce, 0, 2, 0.6),
+		lineWidth: clampNumber(config.lineWidth, 0.4, 3, 1),
+	};
+}
+
 /** 站点默认配色风格（访客未做选择时的回退值） */
 export function getDefaultStyle(): string {
 	return siteConfig.themeColor.style;
@@ -213,11 +406,26 @@ export function resolveDisplaySettings(): {
 	layoutMode: boolean;
 	reduceMotion: boolean;
 	texture: boolean;
+	cursor: boolean;
+	mouseEffect: boolean;
+	constellation: boolean;
 } {
 	const cfg = siteConfig.displaySettings;
 	const textureOpts = resolveTextureOptions(
 		siteConfig.texture,
 		cfg?.texture ?? true,
+	);
+	const cursorOpts = resolveCursorOptions(
+		siteConfig.cursor,
+		cfg?.cursor ?? true,
+	);
+	const mouseEffectOpts = resolveMouseEffectOptions(
+		siteConfig.mouseEffect,
+		cfg?.mouseEffect ?? true,
+	);
+	const constellationOpts = resolveConstellationOptions(
+		siteConfig.constellation,
+		cfg?.constellation ?? true,
 	);
 	return {
 		hue: cfg?.hue ?? true,
@@ -227,5 +435,8 @@ export function resolveDisplaySettings(): {
 		layoutMode: cfg?.layoutMode ?? true,
 		reduceMotion: cfg?.reduceMotion ?? true,
 		texture: textureOpts.enable && (cfg?.texture ?? true),
+		cursor: cursorOpts.enable && (cfg?.cursor ?? true),
+		mouseEffect: mouseEffectOpts.enable && (cfg?.mouseEffect ?? true),
+		constellation: constellationOpts.enable && (cfg?.constellation ?? true),
 	};
 }

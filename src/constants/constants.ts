@@ -22,6 +22,16 @@ export const TEXTURE_PRESETS = [
 	"sakura",
 ] as const;
 
+/** 自定义鼠标指针开关（访客偏好） */
+export const CURSOR_SKIN_KEY = "cursor-skin";
+export const CURSOR_SKIN_CHANGE_EVENT = "cursor-skin:change";
+/** 鼠标拖尾粒子开关（访客偏好） */
+export const MOUSE_EFFECT_KEY = "mouse-effect";
+export const MOUSE_EFFECT_CHANGE_EVENT = "mouse-effect:change";
+/** 连线粒子背景开关（访客偏好） */
+export const CONSTELLATION_KEY = "constellation";
+export const CONSTELLATION_CHANGE_EVENT = "constellation:change";
+
 // Banner height unit: vh
 export const BANNER_HEIGHT = 35;
 export const BANNER_HEIGHT_EXTEND = 30;

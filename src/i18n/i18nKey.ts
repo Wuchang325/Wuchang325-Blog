@@ -273,6 +273,10 @@ enum I18nKey {
 	texturePresetSakura = "texturePresetSakura",
 	textureOpacity = "textureOpacity",
 
+	cursorSkin = "cursorSkin",
+	mouseEffect = "mouseEffect",
+	constellation = "constellation",
+
 	layoutMode = "layoutMode",
 	layoutList = "layoutList",
 	layoutGrid = "layoutGrid",

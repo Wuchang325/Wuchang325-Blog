@@ -1,6 +1,9 @@
 export type { PermalinkConfig } from "./permalinkConfig.ts";
 
 import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
+import type { ConstellationConfig } from "./constellationConfig";
+import type { CursorConfig } from "./cursorConfig";
+import type { MouseEffectConfig } from "./mouseEffectConfig";
 import type { TextureConfig } from "./textureConfig";
 
 export type WallpaperMode = "banner" | "none";
@@ -22,6 +25,12 @@ export type DisplaySettingsConfig = {
 	reduceMotion?: boolean;
 	/** 是否在显示设置面板展示背景纹理选择器（默认 true，且受 texture.enable 控制） */
 	texture?: boolean;
+	/** 是否在显示设置面板展示自定义鼠标指针开关（默认 true，且受 cursor.enable 控制） */
+	cursor?: boolean;
+	/** 是否在显示设置面板展示鼠标拖尾效果开关（默认 true，且受 mouseEffect.enable 控制） */
+	mouseEffect?: boolean;
+	/** 是否在显示设置面板展示连线粒子背景开关（默认 true，且受 constellation.enable 控制） */
+	constellation?: boolean;
 };
 
 export type BannerThemeSource = {
@@ -124,6 +133,12 @@ export type SiteConfig = {
 	};
 	/** 页面背景纹理系统配置，支持布尔值直接开关或详细配置对象 */
 	texture?: boolean | TextureConfig;
+	/** 自定义鼠标指针皮肤配置，支持布尔值直接开关或详细配置对象 */
+	cursor?: boolean | CursorConfig;
+	/** 鼠标拖尾粒子效果配置，支持布尔值直接开关或详细配置对象 */
+	mouseEffect?: boolean | MouseEffectConfig;
+	/** 连线粒子背景配置，支持布尔值直接开关或详细配置对象 */
+	constellation?: boolean | ConstellationConfig;
 	banner: BannerConfig;
 	/** Markdown 正文图片处理配置。 */
 	imageOptimization?: {

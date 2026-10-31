@@ -1,7 +1,10 @@
 ---
 import { Font } from "astro:assets";
 import Snackbar from "@components/atoms/overlay/Snackbar.svelte";
+import ConstellationBackground from "@components/organisms/ConstellationBackground.svelte";
+import CursorSkin from "@components/organisms/CursorSkin.svelte";
 import LanguageNotice from "@components/organisms/LanguageNotice.svelte";
+import MouseSparkEffect from "@components/organisms/MouseSparkEffect.svelte";
 import ConfigCarrier from "@components/system/ConfigCarrier.astro";
 import UmamiRuntime from "@components/system/UmamiRuntime.astro";
 import { resolveAsset } from "@utils/asset-utils";
@@ -10,7 +13,10 @@ import { pathsEqual, toAbsoluteUrl, url } from "@utils/url-utils";
 import {
 	expressiveCodeConfig,
 	profileConfig,
+	resolveConstellationOptions,
+	resolveCursorOptions,
 	resolvedFontOptions,
+	resolveMouseEffectOptions,
 	resolveTextureOptions,
 	resolveUmamiOptions,
 	siteConfig,
@@ -97,6 +103,13 @@ const textureOptions = resolveTextureOptions();
 const defaultTexturePreset = textureOptions.defaultPreset;
 const defaultTextureOpacity = textureOptions.defaultOpacity;
 const textureEnabled = textureOptions.enable;
+// 鼠标体验：自定义指针皮肤 + canvas 拖尾，两者可独立开关
+const cursorOptions = resolveCursorOptions();
+const cursorEnabled = cursorOptions.enable;
+const mouseEffectOptions = resolveMouseEffectOptions();
+const mouseEffectEnabled = mouseEffectOptions.enable;
+const constellationOptions = resolveConstellationOptions();
+const constellationEnabled = constellationOptions.enable;
 const umamiOptions = resolveUmamiOptions(umamiConfig);
 
 const hasDesktopBanner = hasBannerImages(siteConfig.banner.src.desktop);
@@ -171,7 +184,7 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 			/>
 		))}
 
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, hueLocked, lightTheme, darkTheme, defaultWallpaperMode, wallpaperModeLocked, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, hueLocked, lightTheme, darkTheme, defaultWallpaperMode, wallpaperModeLocked, defaultTexturePreset, defaultTextureOpacity, textureEnabled, cursorEnabled, mouseEffectEnabled, constellationEnabled}}>
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			let isDark = false;
 			switch (theme) {
@@ -217,6 +230,23 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 				}
 			}
 
+			// 鼠标体验开关必须在首帧前落到 <html> 上，否则会先闪一下系统光标。
+			// 这两个 dataset 表示「访客偏好」，不代表当前设备一定生效：
+			// 触屏设备由组件内的媒体查询判断跳过初始化，CSS 规则也包在
+			// (hover: hover) and (pointer: fine) 里，不会命中。
+			if (cursorEnabled) {
+				document.documentElement.dataset.cursorSkin =
+					localStorage.getItem('cursor-skin') === 'off' ? 'off' : 'on';
+			}
+			if (mouseEffectEnabled) {
+				document.documentElement.dataset.mouseEffect =
+					localStorage.getItem('mouse-effect') === 'off' ? 'off' : 'on';
+			}
+			if (constellationEnabled) {
+				document.documentElement.dataset.constellation =
+					localStorage.getItem('constellation') === 'off' ? 'off' : 'on';
+			}
+
 			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 			offset = offset - offset % 4;
 			document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
@@ -247,6 +277,16 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 				class="fixed inset-0 pointer-events-none -z-20 transition-opacity duration-500"
 				aria-hidden="true"
 			></div>
+		)}
+		{cursorEnabled && <CursorSkin client:only="svelte" options={cursorOptions} />}
+		{constellationEnabled && (
+			<ConstellationBackground
+				client:only="svelte"
+				options={constellationOptions}
+			/>
+		)}
+		{mouseEffectEnabled && (
+			<MouseSparkEffect client:only="svelte" options={mouseEffectOptions} />
 		)}
 		<Snackbar client:only="svelte"></Snackbar>
 		{languageNoticeEnabled && <LanguageNotice client:only="svelte" />}
