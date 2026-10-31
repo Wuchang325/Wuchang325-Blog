@@ -1,8 +1,15 @@
 ---
+import AccentBar from "@components/atoms/display/AccentBar.svelte";
+import Card from "@components/atoms/display/Card.svelte";
+import CommentSection from "@components/organisms/comment/CommentSection.astro";
 import FriendSection from "@components/organisms/FriendSection.svelte";
 import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { resolveAsset } from "@utils/asset-utils";
 import { resolveI18nText } from "@utils/i18n-utils";
+import { toAbsoluteUrl, url } from "@utils/url-utils";
+import { profileConfig, siteConfig } from "@/config";
 import { friendsConfig } from "@/config/friendsConfig";
 import { getFriendsList } from "../data/friends";
 
@@ -15,8 +22,186 @@ const pageDescription = resolveI18nText(
 	friendsConfig.description,
 	I18nKey.friendsBanner,
 );
+
+const showApplyGuide = friendsConfig.applyGuide !== false;
+const showComment = friendsConfig.comment !== false;
+const requirements = friendsConfig.applyRequirements ?? [];
+
+// 本站信息：供对方先添加本站，也是评论区留言的对照格式。
+// siteInfo 中填了的字段优先，留空的回退到 profileConfig / siteConfig。
+const siteInfo = friendsConfig.siteInfo ?? {};
+/** 完整 URL 原样使用，站内路径补成站点域名 */
+const toSiteUrl = (value: string) =>
+	/^(?:https?:)?\/\//i.test(value)
+		? value
+		: toAbsoluteUrl(value, siteConfig.site);
+
+const siteName = siteInfo.name?.trim() || profileConfig.name;
+const siteDesc = siteInfo.description?.trim() || profileConfig.bio;
+const siteUrl = siteInfo.url?.trim()
+	? toSiteUrl(siteInfo.url.trim())
+	: toAbsoluteUrl(url("/"), siteConfig.site);
+
+let avatarUrl = "";
+const avatarRaw = siteInfo.avatar?.trim() ?? "";
+if (avatarRaw) {
+	avatarUrl = toSiteUrl(avatarRaw);
+} else if (profileConfig.avatar) {
+	// 兜底：dev 下 resolveAsset 返回 Vite 的 /@fs/ 本地路径，拼站点域名会变成死链
+	const resolved = await resolveAsset(profileConfig.avatar);
+	avatarUrl = resolved.startsWith("/@fs/") ? resolved : toSiteUrl(resolved);
+}
+
+const friendsUrl = toAbsoluteUrl(url("/friends/"), siteConfig.site);
 ---
 
-<MainGridLayout title={pageTitle} description={pageDescription} page="friends">
+<MainGridLayout
+	title={pageTitle}
+	description={pageDescription}
+	page="friends"
+	hasComments={showComment}
+>
     <FriendSection friends={getFriendsList()} title={pageTitle} subtitle={pageDescription} client:visible></FriendSection>
+
+    {showApplyGuide && (
+        <Card color="var(--card-bg)" radius="l" class="friend-apply p-6 md:p-8 w-full relative mb-4 onload-animation">
+            <div class="friend-apply__header">
+                <AccentBar size="small" class="!inline-block" />
+                <h2 class="friend-apply__title">{i18n(I18nKey.friendApplyTitle)}</h2>
+            </div>
+
+            <p class="friend-apply__intro">{i18n(I18nKey.friendApplyIntro)}</p>
+
+            <h3 class="friend-apply__heading">{i18n(I18nKey.friendApplySiteInfo)}</h3>
+            <dl class="friend-apply__info">
+                <div class="friend-apply__row">
+                    <dt>{i18n(I18nKey.friendApplyName)}</dt>
+                    <dd>{siteName}</dd>
+                </div>
+                <div class="friend-apply__row">
+                    <dt>{i18n(I18nKey.friendApplyLink)}</dt>
+                    <dd><a href={siteUrl}>{siteUrl}</a></dd>
+                </div>
+                {avatarUrl && (
+                    <div class="friend-apply__row">
+                        <dt>{i18n(I18nKey.friendApplyAvatar)}</dt>
+                        <dd><a href={avatarUrl}>{avatarUrl}</a></dd>
+                    </div>
+                )}
+                <div class="friend-apply__row">
+                    <dt>{i18n(I18nKey.friendApplyDesc)}</dt>
+                    <dd>{siteDesc}</dd>
+                </div>
+            </dl>
+
+            {requirements.length > 0 && (
+                <>
+                    <h3 class="friend-apply__heading">{i18n(I18nKey.friendApplyRequirements)}</h3>
+                    <ul class="friend-apply__list">
+                        {requirements.map((item) => <li>{item}</li>)}
+                    </ul>
+                </>
+            )}
+
+            <p class="friend-apply__hint">{i18n(I18nKey.friendApplyHint)}</p>
+        </Card>
+    )}
+
+    {showComment && (
+        <CommentSection
+            context={{
+                key: "page:friends",
+                path: friendsUrl,
+                title: pageTitle,
+                language: siteConfig.lang,
+            }}
+            class="onload-animation"
+        />
+    )}
 </MainGridLayout>
+
+<style lang="stylus">
+.friend-apply
+    &__header
+        display: flex
+        align-items: center
+        gap: 0.75rem
+        margin-bottom: 1rem
+
+    &__title
+        margin: 0
+        font-size: 1.25rem
+        line-height: 1.75rem
+        font-weight: 700
+        color: var(--on-surface)
+
+        @media (min-width: 768px)
+            font-size: 1.5rem
+            line-height: 2rem
+
+    &__intro
+        margin: 0 0 1.25rem
+        font: var(--m3e-type-body-medium)
+        color: var(--on-surface-variant)
+        line-height: 1.7
+
+    &__heading
+        margin: 1.5rem 0 0.75rem
+        font: var(--m3e-type-label-large)
+        font-weight: 700
+        color: var(--on-surface)
+
+    &__info
+        margin: 0
+        display: flex
+        flex-direction: column
+        gap: 0.5rem
+
+    &__row
+        display: grid
+        grid-template-columns: 5.5rem 1fr
+        gap: 0.75rem
+        align-items: baseline
+        font: var(--m3e-type-body-small)
+        line-height: 1.7
+
+        dt
+            color: var(--on-surface-variant)
+            white-space: nowrap
+
+        dd
+            margin: 0
+            color: var(--on-surface)
+            word-break: break-all
+
+        a
+            color: var(--primary)
+            text-decoration: none
+
+            &:hover
+                opacity: 0.8
+
+    &__list
+        margin: 0
+        padding-left: 1.25rem
+        list-style: disc
+        font: var(--m3e-type-body-small)
+        color: var(--on-surface-variant)
+        line-height: 1.7
+
+        li
+            & + li
+                margin-top: 0.375rem
+
+            &::marker
+                color: var(--primary)
+
+    &__hint
+        margin: 1.5rem 0 0
+        padding: 0.75rem 1rem
+        border-radius: var(--shape-corner-m)
+        background: var(--secondary-container)
+        color: var(--on-secondary-container)
+        font: var(--m3e-type-body-small)
+        line-height: 1.7
+</style>

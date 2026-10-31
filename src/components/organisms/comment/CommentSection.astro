@@ -9,10 +9,17 @@ import type { CommentContext } from "@/types/commentConfig";
 interface Props {
 	context: CommentContext;
 	postCommentEnabled?: boolean;
+	/** 自定义标题；不传时使用「评论」 */
+	heading?: string;
 	class?: string;
 }
 
-const { context, postCommentEnabled = true, class: className } = Astro.props;
+const {
+	context,
+	postCommentEnabled = true,
+	heading,
+	class: className,
+} = Astro.props;
 const options = resolveCommentOptions(commentConfig);
 
 if (!options || !postCommentEnabled) {
@@ -45,7 +52,7 @@ const Waline =
 		<div class="flex items-center gap-3 mb-6 relative">
 			<AccentBar size="small" class="!inline-block" />
 			<h2 id="comments-title" class="text-xl md:text-2xl font-bold text-[var(--on-surface)] m-0">
-				{i18n(I18nKey.comments)}
+				{heading ?? i18n(I18nKey.comments)}
 			</h2>
 		</div>
 
