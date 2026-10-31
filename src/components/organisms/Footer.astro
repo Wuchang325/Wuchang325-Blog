@@ -55,6 +55,16 @@ if (footerConfig.enable) {
 		customFooterHtml = "";
 	}
 }
+
+// 随机一言：enable === false 时完全不渲染占位、不输出脚本
+const hitokotoCfg = footerConfig.hitokoto;
+const hitokoto =
+	hitokotoCfg?.enable === false
+		? null
+		: {
+				categories: (hitokotoCfg?.categories ?? "").trim(),
+				timeout: Math.min(Math.max(hitokotoCfg?.timeout ?? 4000, 1000), 15000),
+			};
 ---
 
 <FooterBar
@@ -65,4 +75,5 @@ if (footerConfig.enable) {
 	version={packageMetadata.version}
 	versionHref={isShironesPackage ? "https://www.npmjs.com/package/shirones" : "https://github.com/LyraVoid/Shirone"}
 	customHtml={customFooterHtml}
+	hitokoto={hitokoto}
 />

@@ -20,6 +20,8 @@ interface Props {
 	versionHref?: string;
 	/** 自定义注入的页脚 HTML（来自 FooterConfig.html） */
 	customHtml?: string;
+	/** 随机一言；null 表示不启用 */
+	hitokoto?: { categories: string; timeout: number } | null;
 	class?: string;
 }
 
@@ -31,6 +33,7 @@ const {
 	version = "",
 	versionHref = "",
 	customHtml = "",
+	hitokoto = null,
 	class: className,
 } = Astro.props;
 ---
@@ -38,6 +41,14 @@ const {
 <footer class:list={["m3-blog-footer", className]}>
 	<div class="m3-blog-footer__divider" aria-hidden="true" />
 	<div class="m3-blog-footer__inner">
+		{hitokoto && (
+			<p
+				class="m3-blog-footer__hitokoto"
+				data-hitokoto
+				data-categories={hitokoto.categories}
+				data-timeout={String(hitokoto.timeout)}
+			>…</p>
+		)}
 		{customHtml && <div class="m3-blog-footer__custom" set:html={customHtml} />}
 		<p class="m3-blog-footer__text">
 			&copy; {year} {name}. All Rights Reserved.
@@ -88,6 +99,92 @@ const {
 	</div>
 </footer>
 
+{hitokoto && (
+	<script is:inline>
+		/*
+		 * 随机一言（https://hitokoto.cn）。
+		 * 页脚在桌面/移动两种布局下各渲染一次，脚本也会输出两份，
+		 * 因此全程用全局守卫：只请求一次，结果回填到所有 [data-hitokoto]。
+		 */
+		(() => {
+			const CACHE = "__shironeHitokoto";
+			const LOADING = "__shironeHitokotoLoading";
+			const BOUND = "__shironeHitokotoBound";
+
+			const nodes = () => document.querySelectorAll("[data-hitokoto]");
+
+			const render = (data) => {
+				for (const el of nodes()) {
+					el.textContent = data.text;
+					if (data.from) {
+						const from = document.createElement("span");
+						from.className = "m3-blog-footer__hitokoto-from";
+						from.textContent = " —— " + data.from;
+						el.appendChild(from);
+					}
+					el.hidden = false;
+				}
+			};
+
+			// 接口失败时整块隐藏，不留空白占位
+			const hideAll = () => {
+				for (const el of nodes()) el.hidden = true;
+			};
+
+			// 切页后页脚会被重建，而 Swup 不会重跑内联脚本，靠事件回填
+			if (!window[BOUND]) {
+				window[BOUND] = true;
+				document.addEventListener("swup:page:view", () => {
+					if (window[CACHE]) render(window[CACHE]);
+				});
+			}
+
+			if (window[CACHE]) {
+				render(window[CACHE]);
+				return;
+			}
+			if (window[LOADING]) return;
+
+			const first = nodes()[0];
+			if (!first) return;
+			window[LOADING] = true;
+
+			const categories = first.dataset.categories || "";
+			const timeout = Number(first.dataset.timeout) || 4000;
+			const params = ["encode=json"];
+			if (categories) params.push("c=" + encodeURIComponent(categories));
+
+			const controller = new AbortController();
+			const timer = setTimeout(() => controller.abort(), timeout);
+
+			fetch("https://v1.hitokoto.cn/?" + params.join("&"), {
+				signal: controller.signal,
+				credentials: "omit",
+				referrerPolicy: "no-referrer",
+			})
+				.then((res) =>
+					res.ok ? res.json() : Promise.reject(new Error("http " + res.status)),
+				)
+				.then((json) => {
+					const text =
+						typeof json.hitokoto === "string" ? json.hitokoto.trim() : "";
+					if (!text) throw new Error("empty");
+					const data = {
+						text,
+						from: typeof json.from === "string" ? json.from.trim() : "",
+					};
+					window[CACHE] = data;
+					render(data);
+				})
+				.catch(hideAll)
+				.finally(() => {
+					clearTimeout(timer);
+					window[LOADING] = false;
+				});
+		})();
+	</script>
+)}
+
 <style lang="stylus">
 .m3-blog-footer
 	&__divider
@@ -102,6 +199,20 @@ const {
 		margin: 0 auto 3rem
 		padding: 0 1.5rem
 		text-align: center
+
+	/* 一言：固定一行高度，加载前后不抖动；长句自然换行 */
+	&__hitokoto
+		max-width: 44rem
+		min-height: 1.7em
+		font: var(--m3e-type-body-small)
+		color: var(--on-surface-variant)
+		font-style: italic
+		line-height: 1.7
+		opacity: 0.85
+
+	&__hitokoto-from
+		font-style: normal
+		opacity: 0.7
 
 	&__text,
 	&__custom
