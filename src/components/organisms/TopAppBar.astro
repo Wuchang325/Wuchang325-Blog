@@ -229,6 +229,17 @@ document.addEventListener('swup:content:replace', bindSearchTriggers);
 </script>}
 
 <style>
+	/* 导航栏是纯 UI：不允许选中文字或拖拽图片，避免误操作时整条被框住 */
+	.top-app-bar,
+	.top-app-bar * {
+		user-select: none;
+		-webkit-user-select: none;
+	}
+
+	.top-app-bar img {
+		-webkit-user-drag: none;
+	}
+
 	.top-app-bar {
 		background: color-mix(in oklab, var(--surface) 92%, transparent);
 		box-shadow: var(--m3e-elevation-1);

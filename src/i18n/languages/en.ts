@@ -19,14 +19,16 @@ export const en: Translation = {
 	[Key.friendsCount]: "friend",
 	[Key.friendsCounts]: "friends",
 	[Key.friendApplyTitle]: "Apply for a friend link",
-	[Key.friendApplyIntro]: "Welcome to exchange links. Add this site first, then leave your site info in the comments below.",
+	[Key.friendApplyIntro]:
+		"Welcome to exchange links. Add this site first, then leave your site info in the comments below.",
 	[Key.friendApplySiteInfo]: "This site",
 	[Key.friendApplyName]: "Name",
 	[Key.friendApplyLink]: "URL",
 	[Key.friendApplyAvatar]: "Avatar",
 	[Key.friendApplyDesc]: "Description",
 	[Key.friendApplyRequirements]: "Requirements",
-	[Key.friendApplyHint]: "Please include: site name, URL, avatar URL, and a one-line description.",
+	[Key.friendApplyHint]:
+		"Please include: site name, URL, avatar URL, and a one-line description.",
 
 	[Key.moments]: "Moments",
 	[Key.momentsNoResults]: "No moments matched your filters",
@@ -255,6 +257,9 @@ export const en: Translation = {
 	[Key.musicErrorSourceUnavailable]: "This track is unavailable.",
 	[Key.musicErrorAutoplayBlocked]: "Autoplay was blocked. Press play to start.",
 	[Key.musicErrorInvalidTrack]: "This track is invalid.",
+	[Key.musicForm]: "Player style",
+	[Key.musicFormSidebar]: "In sidebar",
+	[Key.musicFormFloating]: "Floating card",
 
 	[Key.themeColor]: "Theme Color",
 	[Key.colorStyle]: "Color Style",

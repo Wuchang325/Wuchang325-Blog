@@ -4,6 +4,7 @@ import WidgetLayout from "@components/molecules/WidgetLayout.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { resolveImageAsset } from "@utils/asset-utils";
+import { buildMusicLabels } from "@utils/music/labels";
 import stylus from "stylus";
 import { musicConfig, resolveMusicOptions } from "@/config/musicConfig";
 import { musicTracks } from "@/data/music";
@@ -72,32 +73,7 @@ const musicSidebarStyles = options
 			});
 		})
 	: null;
-const labels = {
-	previous: i18n(I18nKey.musicPrevious),
-	play: i18n(I18nKey.musicPlay),
-	pause: i18n(I18nKey.musicPause),
-	next: i18n(I18nKey.musicNext),
-	mute: i18n(I18nKey.musicMute),
-	unmute: i18n(I18nKey.musicUnmute),
-	playbackMode: i18n(I18nKey.musicPlaybackMode),
-	modeSequence: i18n(I18nKey.musicModeSequence),
-	modeRepeatOne: i18n(I18nKey.musicModeRepeatOne),
-	modeShuffle: i18n(I18nKey.musicModeShuffle),
-	progress: i18n(I18nKey.musicProgress),
-	volume: i18n(I18nKey.musicVolume),
-	showPlaylist: i18n(I18nKey.musicShowPlaylist),
-	hidePlaylist: i18n(I18nKey.musicHidePlaylist),
-	empty: i18n(I18nKey.musicEmpty),
-	loading: i18n(I18nKey.musicLoading),
-	notRequested: i18n(I18nKey.musicNotRequested),
-	nowPlaying: i18n(I18nKey.musicNowPlaying),
-	errors: {
-		"empty-playlist": i18n(I18nKey.musicErrorEmptyPlaylist),
-		"source-unavailable": i18n(I18nKey.musicErrorSourceUnavailable),
-		"autoplay-blocked": i18n(I18nKey.musicErrorAutoplayBlocked),
-		"invalid-track": i18n(I18nKey.musicErrorInvalidTrack),
-	},
-};
+const labels = buildMusicLabels();
 ---
 
 {optimizedOptions && (

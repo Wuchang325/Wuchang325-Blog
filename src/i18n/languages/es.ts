@@ -19,14 +19,16 @@ export const es: Translation = {
 	[Key.friendsCount]: "amigo",
 	[Key.friendsCounts]: "amigos",
 	[Key.friendApplyTitle]: "Solicitar enlace de amistad",
-	[Key.friendApplyIntro]: "Te damos la bienvenida al intercambio de enlaces. Añade este sitio primero y deja la información de tu sitio en los comentarios.",
+	[Key.friendApplyIntro]:
+		"Te damos la bienvenida al intercambio de enlaces. Añade este sitio primero y deja la información de tu sitio en los comentarios.",
 	[Key.friendApplySiteInfo]: "Este sitio",
 	[Key.friendApplyName]: "Nombre",
 	[Key.friendApplyLink]: "Enlace",
 	[Key.friendApplyAvatar]: "Avatar",
 	[Key.friendApplyDesc]: "Descripción",
 	[Key.friendApplyRequirements]: "Requisitos",
-	[Key.friendApplyHint]: "Incluye: nombre del sitio, enlace, URL del avatar y una descripción breve.",
+	[Key.friendApplyHint]:
+		"Incluye: nombre del sitio, enlace, URL del avatar y una descripción breve.",
 
 	[Key.moments]: "Momentos",
 	[Key.momentsNoResults]: "No hay momentos que coincidan con los filtros",
@@ -257,6 +259,9 @@ export const es: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"La reproducción automática está bloqueada. Pulsa reproducir para comenzar.",
 	[Key.musicErrorInvalidTrack]: "Esta pista no es válida.",
+	[Key.musicForm]: "Estilo del reproductor",
+	[Key.musicFormSidebar]: "En la barra lateral",
+	[Key.musicFormFloating]: "Tarjeta flotante",
 
 	[Key.themeColor]: "Color del tema",
 	[Key.colorStyle]: "Estilo de color",

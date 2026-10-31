@@ -5,6 +5,7 @@ import ConstellationBackground from "@components/organisms/ConstellationBackgrou
 import CursorSkin from "@components/organisms/CursorSkin.svelte";
 import LanguageNotice from "@components/organisms/LanguageNotice.svelte";
 import MouseSparkEffect from "@components/organisms/MouseSparkEffect.svelte";
+import MusicFloatingWidget from "@components/organisms/music/MusicFloating.astro";
 import ConfigCarrier from "@components/system/ConfigCarrier.astro";
 import UmamiRuntime from "@components/system/UmamiRuntime.astro";
 import { resolveAsset } from "@utils/asset-utils";
@@ -22,6 +23,7 @@ import {
 	siteConfig,
 	umamiConfig,
 } from "@/config";
+import { musicConfig, resolveMusicOptions } from "@/config/musicConfig";
 import type { SidebarPage } from "@/types/sidebarConfig";
 import {
 	AUTO_MODE,
@@ -110,6 +112,10 @@ const mouseEffectOptions = resolveMouseEffectOptions();
 const mouseEffectEnabled = mouseEffectOptions.enable;
 const constellationOptions = resolveConstellationOptions();
 const constellationEnabled = constellationOptions.enable;
+// 音乐形态：首屏就要落到 <html> 上，否则侧栏卡片会先闪一下再跳到悬浮条
+const musicOptions = resolveMusicOptions(musicConfig);
+const musicEnabled = musicOptions !== null;
+const musicFormDefault = musicOptions?.form ?? "top";
 const umamiOptions = resolveUmamiOptions(umamiConfig);
 
 const hasDesktopBanner = hasBannerImages(siteConfig.banner.src.desktop);
@@ -184,7 +190,7 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 			/>
 		))}
 
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, hueLocked, lightTheme, darkTheme, defaultWallpaperMode, wallpaperModeLocked, defaultTexturePreset, defaultTextureOpacity, textureEnabled, cursorEnabled, mouseEffectEnabled, constellationEnabled}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, hueLocked, lightTheme, darkTheme, defaultWallpaperMode, wallpaperModeLocked, defaultTexturePreset, defaultTextureOpacity, textureEnabled, cursorEnabled, mouseEffectEnabled, constellationEnabled, musicEnabled, musicFormDefault}}>
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			let isDark = false;
 			switch (theme) {
@@ -246,6 +252,13 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 				document.documentElement.dataset.constellation =
 					localStorage.getItem('constellation') === 'off' ? 'off' : 'on';
 			}
+			if (musicEnabled) {
+				const storedMusicForm = localStorage.getItem('music-form');
+				const validMusicForms = ['sidebar', 'floating'];
+				document.documentElement.dataset.musicForm = validMusicForms.includes(storedMusicForm)
+					? storedMusicForm
+					: musicFormDefault;
+			}
 
 			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 			offset = offset - offset % 4;
@@ -288,6 +301,8 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 		{mouseEffectEnabled && (
 			<MouseSparkEffect client:only="svelte" options={mouseEffectOptions} />
 		)}
+		{/* 悬浮音乐条要挂在 body 层：放进 #main-layout（z-30）会被横幅盖住 */}
+		{musicEnabled && <MusicFloatingWidget />}
 		<Snackbar client:only="svelte"></Snackbar>
 		{languageNoticeEnabled && <LanguageNotice client:only="svelte" />}
 		<slot />

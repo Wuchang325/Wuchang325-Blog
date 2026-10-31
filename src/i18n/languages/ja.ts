@@ -19,14 +19,16 @@ export const ja: Translation = {
 	[Key.friendsCount]: "件の友達リンク",
 	[Key.friendsCounts]: "件の友達リンク",
 	[Key.friendApplyTitle]: "相互リンク申請",
-	[Key.friendApplyIntro]: "リンク交換を歓迎します。まず当サイトを追加してから、下のコメント欄にサイト情報をお書きください。",
+	[Key.friendApplyIntro]:
+		"リンク交換を歓迎します。まず当サイトを追加してから、下のコメント欄にサイト情報をお書きください。",
 	[Key.friendApplySiteInfo]: "当サイト情報",
 	[Key.friendApplyName]: "サイト名",
 	[Key.friendApplyLink]: "URL",
 	[Key.friendApplyAvatar]: "アバター",
 	[Key.friendApplyDesc]: "説明",
 	[Key.friendApplyRequirements]: "申請条件",
-	[Key.friendApplyHint]: "サイト名・URL・アバターURL・一言説明をご記入ください。",
+	[Key.friendApplyHint]:
+		"サイト名・URL・アバターURL・一言説明をご記入ください。",
 
 	[Key.moments]: "モーメンツ",
 	[Key.momentsNoResults]: "条件に一致するモーメンツはありません",
@@ -254,6 +256,9 @@ export const ja: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"自動再生がブロックされました。再生ボタンを押してください。",
 	[Key.musicErrorInvalidTrack]: "曲の情報が無効です。",
+	[Key.musicForm]: "プレイヤー表示",
+	[Key.musicFormSidebar]: "サイドバー",
+	[Key.musicFormFloating]: "フローティング",
 
 	[Key.themeColor]: "テーマカラー",
 	[Key.colorStyle]: "配色スタイル",

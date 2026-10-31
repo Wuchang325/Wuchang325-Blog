@@ -22,6 +22,13 @@ import {
 	resolveScheme,
 } from "@utils/mc-utils";
 import {
+	applyMusicForm,
+	isMusicForm,
+	MUSIC_FORMS,
+	readMusicForm,
+	setMusicForm,
+} from "@utils/music/form";
+import {
 	getDefaultConstellationEnabled,
 	getDefaultCursorEnabled,
 	getDefaultHue,
@@ -53,6 +60,7 @@ import {
 	resolveDisplaySettings,
 	siteConfig,
 } from "@/config";
+import { musicConfig, resolveMusicOptions } from "@/config/musicConfig";
 import type { WallpaperMode } from "@/types/config";
 import type { PostListMode } from "@/types/postListConfig";
 import type { TexturePreset } from "@/types/textureConfig";
@@ -100,6 +108,12 @@ let mouseEffectEnabled = $state(getStoredMouseEffectEnabled());
 // 连线粒子背景
 const defaultConstellationEnabled = getDefaultConstellationEnabled();
 let constellationEnabled = $state(getStoredConstellationEnabled());
+
+// 音乐播放器形态：top / sticky / floating 三选一
+const musicOptions = resolveMusicOptions(musicConfig);
+const musicEnabled = musicOptions !== null;
+const defaultMusicForm = musicOptions?.form ?? "top";
+let musicForm = $state<string>(readMusicForm() ?? defaultMusicForm);
 
 const textureOptions: {
 	value: TexturePreset;
@@ -179,6 +193,7 @@ function confirmReset() {
 	cursorEnabled = defaultCursorEnabled;
 	mouseEffectEnabled = defaultMouseEffectEnabled;
 	constellationEnabled = defaultConstellationEnabled;
+	musicForm = defaultMusicForm;
 }
 
 /** 是否有可重置的偏离（控制 Reset 按钮可见性） */
@@ -192,7 +207,8 @@ const isDirty = $derived(
 		textureOpacity !== defaultTextureOpacity ||
 		cursorEnabled !== defaultCursorEnabled ||
 		mouseEffectEnabled !== defaultMouseEffectEnabled ||
-		constellationEnabled !== defaultConstellationEnabled,
+		constellationEnabled !== defaultConstellationEnabled ||
+		musicForm !== defaultMusicForm,
 );
 
 $effect(() => {
@@ -228,6 +244,9 @@ $effect(() => {
 });
 $effect(() => {
 	setConstellationEnabled(constellationEnabled);
+});
+$effect(() => {
+	if (musicEnabled && isMusicForm(musicForm)) setMusicForm(musicForm);
 });
 $effect(() => {
 	if (postListMode === lastAppliedMode) return;
@@ -466,6 +485,28 @@ const stylePreviews = $derived(
                         <Switch bind:checked={constellationEnabled} label={i18n(I18nKey.constellation)} icons />
                     </div>
                 {/if}
+            </div>
+        {/if}
+
+        <!-- 段四：音乐播放器形态 -->
+        {#if musicEnabled}
+            <div class="p-4 flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                    <Icon icon="material-symbols:music-note-rounded" class="text-lg text-[var(--primary)]" />
+                    <span class="text-sm font-bold text-[var(--on-surface)]">{i18n(I18nKey.musicForm)}</span>
+                </div>
+                <SegmentedButton
+                    options={MUSIC_FORMS.map((form) => ({
+                        value: form,
+                        label: i18n(
+                            form === "sidebar"
+                                ? I18nKey.musicFormSidebar
+                                : I18nKey.musicFormFloating,
+                        ),
+                    }))}
+                    bind:value={musicForm}
+                    label={i18n(I18nKey.musicForm)}
+                />
             </div>
         {/if}
     </PanelStack>

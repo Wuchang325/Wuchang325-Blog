@@ -1,0 +1,42 @@
+---
+/**
+ * 音乐播放器悬浮形态的 Astro 外壳。
+ *
+ * 只负责把曲目封面解析成可加载的 URL 并组装文案，交互与状态在 MusicFloating.svelte 里。
+ * 与侧栏形态共用同一个 runtime，不额外创建音频实例。
+ */
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { resolveImageAsset } from "@utils/asset-utils";
+import { buildMusicLabels } from "@utils/music/labels";
+import { musicConfig, resolveMusicOptions } from "@/config/musicConfig";
+import MusicFloating from "./MusicFloating.svelte";
+
+const options = resolveMusicOptions(musicConfig);
+
+// 悬浮条封面只有 40px，不做多尺寸生成，只把 src 相对路径解析成可访问 URL
+const optimizedOptions = options
+	? {
+			...options,
+			playlist: await Promise.all(
+				options.playlist.map(async (track) => {
+					if (!track.cover) return track;
+					const asset = await resolveImageAsset(track.cover);
+					return {
+						...track,
+						cover: typeof asset === "string" ? asset : asset.src,
+					};
+				}),
+			),
+		}
+	: null;
+---
+
+{optimizedOptions && (
+	<MusicFloating
+		client:load
+		options={optimizedOptions}
+		labels={buildMusicLabels()}
+		label={i18n(I18nKey.musicPlayerTitle)}
+	/>
+)}

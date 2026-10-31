@@ -245,6 +245,9 @@ enum I18nKey {
 	musicErrorSourceUnavailable = "musicErrorSourceUnavailable",
 	musicErrorAutoplayBlocked = "musicErrorAutoplayBlocked",
 	musicErrorInvalidTrack = "musicErrorInvalidTrack",
+	musicForm = "musicForm",
+	musicFormSidebar = "musicFormSidebar",
+	musicFormFloating = "musicFormFloating",
 
 	themeColor = "themeColor",
 	colorStyle = "colorStyle",

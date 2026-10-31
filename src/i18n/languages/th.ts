@@ -18,7 +18,8 @@ export const th: Translation = {
 	[Key.friendsCount]: "ลิงก์",
 	[Key.friendsCounts]: "ลิงก์",
 	[Key.friendApplyTitle]: "ขอแลกลิงก์",
-	[Key.friendApplyIntro]: "ยินดีแลกลิงก์ กรุณาเพิ่มเว็บไซต์นี้ก่อน แล้วฝากข้อมูลเว็บไซต์ของคุณไว้ในความคิดเห็นด้านล่าง",
+	[Key.friendApplyIntro]:
+		"ยินดีแลกลิงก์ กรุณาเพิ่มเว็บไซต์นี้ก่อน แล้วฝากข้อมูลเว็บไซต์ของคุณไว้ในความคิดเห็นด้านล่าง",
 	[Key.friendApplySiteInfo]: "ข้อมูลเว็บไซต์นี้",
 	[Key.friendApplyName]: "ชื่อ",
 	[Key.friendApplyLink]: "ลิงก์",
@@ -245,6 +246,9 @@ export const th: Translation = {
 	[Key.musicErrorSourceUnavailable]: "ไม่สามารถเล่นเพลงนี้ได้",
 	[Key.musicErrorAutoplayBlocked]: "ระบบบล็อกการเล่นอัตโนมัติ กดปุ่มเล่นเพื่อเริ่ม",
 	[Key.musicErrorInvalidTrack]: "ข้อมูลเพลงนี้ไม่ถูกต้อง",
+	[Key.musicForm]: "รูปแบบเครื่องเล่น",
+	[Key.musicFormSidebar]: "ในแถบข้าง",
+	[Key.musicFormFloating]: "การ์ดลอย",
 
 	[Key.themeColor]: "สีธีม",
 	[Key.colorStyle]: "สไตล์สี",

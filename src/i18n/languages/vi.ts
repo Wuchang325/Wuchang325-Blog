@@ -19,14 +19,16 @@ export const vi: Translation = {
 	[Key.friendsCount]: "liên kết bạn bè",
 	[Key.friendsCounts]: "liên kết bạn bè",
 	[Key.friendApplyTitle]: "Đăng ký liên kết bạn bè",
-	[Key.friendApplyIntro]: "Chào mừng trao đổi liên kết. Hãy thêm trang này trước, sau đó để lại thông tin trang của bạn trong phần bình luận bên dưới.",
+	[Key.friendApplyIntro]:
+		"Chào mừng trao đổi liên kết. Hãy thêm trang này trước, sau đó để lại thông tin trang của bạn trong phần bình luận bên dưới.",
 	[Key.friendApplySiteInfo]: "Trang này",
 	[Key.friendApplyName]: "Tên",
 	[Key.friendApplyLink]: "Liên kết",
 	[Key.friendApplyAvatar]: "Ảnh đại diện",
 	[Key.friendApplyDesc]: "Mô tả",
 	[Key.friendApplyRequirements]: "Yêu cầu",
-	[Key.friendApplyHint]: "Vui lòng ghi rõ: tên trang, liên kết, URL ảnh đại diện và mô tả ngắn.",
+	[Key.friendApplyHint]:
+		"Vui lòng ghi rõ: tên trang, liên kết, URL ảnh đại diện và mô tả ngắn.",
 
 	[Key.moments]: "Khoảnh khắc",
 	[Key.momentsNoResults]: "Không có khoảnh khắc nào khớp bộ lọc",
@@ -257,6 +259,9 @@ export const vi: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"Tự động phát đã bị chặn. Nhấn nút phát để bắt đầu.",
 	[Key.musicErrorInvalidTrack]: "Bài hát này không hợp lệ.",
+	[Key.musicForm]: "Kiểu trình phát",
+	[Key.musicFormSidebar]: "Trong thanh bên",
+	[Key.musicFormFloating]: "Thẻ nổi",
 
 	[Key.themeColor]: "Màu chủ đề",
 	[Key.colorStyle]: "Phong cách màu",

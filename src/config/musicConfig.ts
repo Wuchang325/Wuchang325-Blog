@@ -2,6 +2,7 @@ import { musicTracks } from "../data/music.ts";
 import type {
 	MetingMusicConfig,
 	MusicConfig,
+	MusicForm,
 	MusicProvider,
 	PlaybackMode,
 	TrackDescriptor,
@@ -79,6 +80,7 @@ export interface ResolvedMusicOptions {
 	readonly meting?: MetingMusicConfig;
 	readonly defaultVolume: number;
 	readonly defaultMode: PlaybackMode;
+	readonly form: MusicForm;
 }
 
 const ABSOLUTE_MEDIA_SOURCE = /^(?:https?:)?\/\//i;
@@ -147,6 +149,7 @@ export function resolveMusicOptions(
 			meting: resolveMetingConfig(config.meting),
 			defaultVolume: clampMusicVolume(config.defaultVolume),
 			defaultMode: config.defaultMode,
+			form: config.form ?? "sidebar",
 		});
 	}
 
@@ -171,6 +174,7 @@ export function resolveMusicOptions(
 			meting: resolveMetingConfig(config.meting),
 			defaultVolume: clampMusicVolume(config.defaultVolume),
 			defaultMode: config.defaultMode,
+			form: config.form ?? "sidebar",
 		});
 	}
 
@@ -181,5 +185,6 @@ export function resolveMusicOptions(
 		playlist: Object.freeze(playlist),
 		defaultVolume: clampMusicVolume(config.defaultVolume),
 		defaultMode: config.defaultMode,
+		form: config.form ?? "sidebar",
 	});
 }

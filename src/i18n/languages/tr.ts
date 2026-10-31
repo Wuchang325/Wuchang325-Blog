@@ -19,14 +19,16 @@ export const tr: Translation = {
 	[Key.friendsCount]: "arkadaş",
 	[Key.friendsCounts]: "arkadaş",
 	[Key.friendApplyTitle]: "Bağlantı başvurusu",
-	[Key.friendApplyIntro]: "Bağlantı değişimine açığız. Önce bu siteyi ekleyin, ardından aşağıdaki yorumlara sitenizin bilgilerini bırakın.",
+	[Key.friendApplyIntro]:
+		"Bağlantı değişimine açığız. Önce bu siteyi ekleyin, ardından aşağıdaki yorumlara sitenizin bilgilerini bırakın.",
 	[Key.friendApplySiteInfo]: "Bu site",
 	[Key.friendApplyName]: "Ad",
 	[Key.friendApplyLink]: "Bağlantı",
 	[Key.friendApplyAvatar]: "Avatar",
 	[Key.friendApplyDesc]: "Açıklama",
 	[Key.friendApplyRequirements]: "Koşullar",
-	[Key.friendApplyHint]: "Lütfen ekleyin: site adı, bağlantı, avatar URL'si ve kısa açıklama.",
+	[Key.friendApplyHint]:
+		"Lütfen ekleyin: site adı, bağlantı, avatar URL'si ve kısa açıklama.",
 
 	[Key.moments]: "Anlar",
 	[Key.momentsNoResults]: "Filtrelerle eşleşen an yok",
@@ -257,6 +259,9 @@ export const tr: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"Otomatik oynatma engellendi. Başlatmak için oynat düğmesine basın.",
 	[Key.musicErrorInvalidTrack]: "Bu parça geçersiz.",
+	[Key.musicForm]: "Oynatıcı biçimi",
+	[Key.musicFormSidebar]: "Kenar çubuğunda",
+	[Key.musicFormFloating]: "Yüzen kart",
 
 	[Key.themeColor]: "Tema Rengi",
 	[Key.colorStyle]: "Renk Stili",

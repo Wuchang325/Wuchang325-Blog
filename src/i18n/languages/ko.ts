@@ -19,14 +19,16 @@ export const ko: Translation = {
 	[Key.friendsCount]: "개의 친구 링크",
 	[Key.friendsCounts]: "개의 친구 링크",
 	[Key.friendApplyTitle]: "상호 링크 신청",
-	[Key.friendApplyIntro]: "링크 교환을 환영합니다. 먼저 이 사이트를 추가한 뒤 아래 댓글에 사이트 정보를 남겨 주세요.",
+	[Key.friendApplyIntro]:
+		"링크 교환을 환영합니다. 먼저 이 사이트를 추가한 뒤 아래 댓글에 사이트 정보를 남겨 주세요.",
 	[Key.friendApplySiteInfo]: "이 사이트 정보",
 	[Key.friendApplyName]: "사이트 이름",
 	[Key.friendApplyLink]: "URL",
 	[Key.friendApplyAvatar]: "아바타",
 	[Key.friendApplyDesc]: "설명",
 	[Key.friendApplyRequirements]: "신청 조건",
-	[Key.friendApplyHint]: "사이트 이름, URL, 아바타 URL, 한 줄 설명을 포함해 주세요.",
+	[Key.friendApplyHint]:
+		"사이트 이름, URL, 아바타 URL, 한 줄 설명을 포함해 주세요.",
 
 	[Key.moments]: "모먼트",
 	[Key.momentsNoResults]: "조건에 맞는 모먼트가 없습니다",
@@ -254,6 +256,9 @@ export const ko: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"자동 재생이 차단되었습니다. 재생 버튼을 눌러 시작하세요.",
 	[Key.musicErrorInvalidTrack]: "곡 정보가 올바르지 않습니다.",
+	[Key.musicForm]: "플레이어 형태",
+	[Key.musicFormSidebar]: "사이드바",
+	[Key.musicFormFloating]: "플로팅 카드",
 
 	[Key.themeColor]: "테마 색상",
 	[Key.colorStyle]: "색상 스타일",

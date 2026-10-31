@@ -1,5 +1,13 @@
 export type PlaybackMode = "sequence" | "repeat-one" | "shuffle";
 
+/**
+ * 播放器的展示形态。
+ *
+ * - `sidebar`：侧栏内嵌卡片（沿用 sidebarConfig 里 music widget 的 slot）
+ * - `floating`：不占侧栏，收成贴边小条，点击展开为悬浮卡片，可拖动换边
+ */
+export type MusicForm = "sidebar" | "floating";
+
 export type MusicProvider = "local" | "meting" | "custom" | "mixed";
 
 export type MetingServer = "netease" | "tencent" | "kugou" | "xiami" | "baidu";
@@ -67,6 +75,8 @@ export interface MusicConfig {
 	readonly defaultVolume: number;
 	/** 初始播放模式 */
 	readonly defaultMode: PlaybackMode;
+	/** 默认展示形态（访客可在显示设置面板覆盖，默认 "top"） */
+	readonly form?: MusicForm;
 }
 
 export interface MusicSnapshot {

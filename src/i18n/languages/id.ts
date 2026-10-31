@@ -19,14 +19,16 @@ export const id: Translation = {
 	[Key.friendsCount]: "teman",
 	[Key.friendsCounts]: "teman",
 	[Key.friendApplyTitle]: "Ajukan tautan teman",
-	[Key.friendApplyIntro]: "Kami menerima tukar tautan. Tambahkan situs ini dulu, lalu tinggalkan info situs Anda di komentar di bawah.",
+	[Key.friendApplyIntro]:
+		"Kami menerima tukar tautan. Tambahkan situs ini dulu, lalu tinggalkan info situs Anda di komentar di bawah.",
 	[Key.friendApplySiteInfo]: "Info situs ini",
 	[Key.friendApplyName]: "Nama",
 	[Key.friendApplyLink]: "Tautan",
 	[Key.friendApplyAvatar]: "Avatar",
 	[Key.friendApplyDesc]: "Deskripsi",
 	[Key.friendApplyRequirements]: "Persyaratan",
-	[Key.friendApplyHint]: "Sertakan: nama situs, tautan, URL avatar, dan deskripsi singkat.",
+	[Key.friendApplyHint]:
+		"Sertakan: nama situs, tautan, URL avatar, dan deskripsi singkat.",
 
 	[Key.moments]: "Momen",
 	[Key.momentsNoResults]: "Tidak ada momen yang cocok dengan filter",
@@ -259,6 +261,9 @@ export const id: Translation = {
 	[Key.musicErrorAutoplayBlocked]:
 		"Pemutaran otomatis diblokir. Tekan putar untuk memulai.",
 	[Key.musicErrorInvalidTrack]: "Lagu ini tidak valid.",
+	[Key.musicForm]: "Gaya pemutar",
+	[Key.musicFormSidebar]: "Di sidebar",
+	[Key.musicFormFloating]: "Kartu melayang",
 
 	[Key.themeColor]: "Warna Tema",
 	[Key.colorStyle]: "Gaya Warna",

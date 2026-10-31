@@ -18,7 +18,8 @@ export const zh_TW: Translation = {
 	[Key.friendsCount]: "個友鏈",
 	[Key.friendsCounts]: "個友鏈",
 	[Key.friendApplyTitle]: "申請友鏈",
-	[Key.friendApplyIntro]: "歡迎交換友鏈。請先將本站加入友鏈，再於下方留言區留下你的站點資訊。",
+	[Key.friendApplyIntro]:
+		"歡迎交換友鏈。請先將本站加入友鏈，再於下方留言區留下你的站點資訊。",
 	[Key.friendApplySiteInfo]: "本站資訊",
 	[Key.friendApplyName]: "名稱",
 	[Key.friendApplyLink]: "連結",
@@ -246,6 +247,9 @@ export const zh_TW: Translation = {
 	[Key.musicErrorSourceUnavailable]: "此音源無法使用",
 	[Key.musicErrorAutoplayBlocked]: "自動播放受到限制，請點擊播放按鈕開始",
 	[Key.musicErrorInvalidTrack]: "歌曲資訊無效",
+	[Key.musicForm]: "播放器形態",
+	[Key.musicFormSidebar]: "側欄內嵌",
+	[Key.musicFormFloating]: "懸浮卡片",
 
 	[Key.themeColor]: "主題色",
 	[Key.colorStyle]: "配色風格",

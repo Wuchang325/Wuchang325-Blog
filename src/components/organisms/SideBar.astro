@@ -103,62 +103,57 @@ const animationDelay = (index: number) =>
 // 首屏可见性：与客户端脚本共用 utils/sidebar-page 的判定，避免漂移
 const isVisible = (widget: SidebarWidget) =>
 	isWidgetVisibleOnPage(widget.pages, currentPage);
-const hasVisibleTop = topWidgets.some(isVisible);
-const hasVisibleSticky = stickyWidgets.some(isVisible);
 ---
 
 <aside id={id} aria-label={ariaLabel} class:list={[className, "w-full lg:h-full"]}>
-	{topWidgets.length > 0 && (
-		<div
-			data-sidebar-group
-			class:list={["flex flex-col w-full gap-4 mb-4", { hidden: !hasVisibleTop }]}
-		>
-			{topWidgets.map((widget) => {
-				const Component = componentMap[widget.type] as WidgetRenderer;
-				return (
-					<div
-						data-sidebar-pages={pagesToAttribute(widget.pages)}
-						class:list={["sidebar-widget", { hidden: !isVisible(widget) }]}
-					>
-						<Component
-							widget={widget}
-							headings={widget.type === "toc" ? headings : undefined}
-							priority={widget.type === "profile" && currentPage === "about"}
-						/>
-					</div>
-				);
-			})}
-		</div>
-	)}
-	{stickyWidgets.length > 0 && (
-		<div
-			id={`${id}-sticky`}
-			data-sidebar-group
-			class:list={[
-				"flex flex-col w-full gap-4 lg:sticky lg:top-20",
-				{ hidden: !hasVisibleSticky },
-				{ "lg:min-h-0 lg:flex-1": column === "secondary" },
-			]}
-		>
-			{stickyWidgets.map((widget, index) => {
-				const Component = componentMap[widget.type] as WidgetRenderer;
-				return (
-					<div
-						data-sidebar-pages={pagesToAttribute(widget.pages)}
-						class:list={["sidebar-widget", { hidden: !isVisible(widget) }]}
-					>
-						<Component
-							widget={widget}
-							headings={widget.type === "toc" ? headings : undefined}
-							priority={widget.type === "profile" && currentPage === "about"}
-							class="onload-animation"
-							style={`animation-delay: ${animationDelay(index)}`}
-						/>
-					</div>
-				);
-			})}
-		</div>
-	)}
+	{/* 两个分组恒常渲染：音乐播放器的 top/sticky 形态切换要把节点在两者间移动，
+	    不能因为分组为空就不渲染容器。空分组由样式里的 :has() 收起。 */}
+	<div data-sidebar-group data-slot="top" class="flex flex-col w-full gap-4 mb-4">
+		{topWidgets.map((widget) => {
+			const Component = componentMap[widget.type] as WidgetRenderer;
+			return (
+				<div
+					data-sidebar-pages={pagesToAttribute(widget.pages)}
+					data-music-widget={widget.type === "music" ? "" : undefined}
+					class:list={["sidebar-widget", { hidden: !isVisible(widget) }]}
+				>
+					<Component
+						widget={widget}
+						headings={widget.type === "toc" ? headings : undefined}
+						priority={widget.type === "profile" && currentPage === "about"}
+					/>
+				</div>
+			);
+		})}
+	</div>
+	<div
+		id={`${id}-sticky`}
+		data-sidebar-group
+		data-slot="sticky"
+		class:list={[
+			"flex flex-col w-full gap-4 lg:sticky lg:top-20",
+			{ "lg:min-h-0 lg:flex-1": column === "secondary" },
+		]}
+	>
+		{stickyWidgets.map((widget, index) => {
+			const Component = componentMap[widget.type] as WidgetRenderer;
+			return (
+				<div
+					data-sidebar-pages={pagesToAttribute(widget.pages)}
+					data-music-widget={widget.type === "music" ? "" : undefined}
+					class:list={["sidebar-widget", { hidden: !isVisible(widget) }]}
+				>
+					<Component
+						widget={widget}
+						headings={widget.type === "toc" ? headings : undefined}
+						priority={widget.type === "profile" && currentPage === "about"}
+						class="onload-animation"
+						style={`animation-delay: ${animationDelay(index)}`}
+					/>
+				</div>
+			);
+		})}
+	</div>
 </aside>
 
 <style lang="stylus">
@@ -167,6 +162,15 @@ const hasVisibleSticky = stickyWidgets.some(isVisible);
 	   需显式拉满宽度 */
 	.sidebar-widget > *
 		display: block
+		width: 100%
+
+	/* 分组内没有可见 widget 时整组收起，避免多出一个空 gap 槽位 */
+	[data-sidebar-group]:not(:has(.sidebar-widget:not(.hidden)))
+		display: none
+
+	/* 悬浮形态下侧栏卡片让位；放在 CSS 里避免首屏闪一下再隐藏 */
+	:global(html[data-music-form="floating"] [data-music-widget])
+		display: none
 		width: 100%
 </style>
 
