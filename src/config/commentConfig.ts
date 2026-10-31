@@ -39,7 +39,7 @@ export const commentConfig: CommentConfig = withUserConfig("comment", {
 	/** 全局评论总开关：false 时完全不加载评论脚本与 DOM */
 	enable: true,
 	/** 评论提供商类型："none" | "twikoo" | "giscus" | "waline" */
-	provider: "giscus",
+	provider: "waline",
 	/** 是否开启视口懒加载：滚动进入视口才动态加载评论组件（推荐 true） */
 	lazy: true,
 	/** Twikoo 专有配置 */
@@ -83,7 +83,7 @@ export const commentConfig: CommentConfig = withUserConfig("comment", {
 	/** Waline 专有配置：https://waline.js.org/ */
 	waline: {
 		/** 服务端地址（必填）；留空时不渲染评论区 */
-		serverURL: "",
+		serverURL: "https://waline.zient.top",
 		/** 完整 UMD 客户端，按需加载；升级时与下面的 CSS 保持同版本 */
 		scriptUrl:
 			"https://cdn.jsdelivr.net/npm/@waline/client@3.16.1/dist/waline.umd.js",
@@ -91,7 +91,7 @@ export const commentConfig: CommentConfig = withUserConfig("comment", {
 		styleUrl:
 			"https://cdn.jsdelivr.net/npm/@waline/client@3.16.1/dist/waline.css",
 		/** auto 跟随文章/站点语言；也可指定 Waline 语言码，如 zh-CN、en、jp */
-		lang: "auto",
+		lang: "zh-CN",
 		/** 可选文案覆盖；省略的字段使用 Waline 当前语言默认值 */
 		locale: {
 			/** 评论输入框提示；空字符串不显示提示 */
