@@ -17,7 +17,7 @@ export const friendsConfig: FriendsConfig = withUserConfig("friends", {
 	],
 	// 指引卡片展示的本站信息。留空的字段自动回退到 profileConfig / siteConfig。
 	siteInfo: {
-		name: "", // 留空 = profileConfig.name
+		name: "无常の小窝", // 留空 = profileConfig.name
 		url: "", // 留空 = siteConfig.site
 		// 用 public/ 下的静态头像，直接以站点域名对外提供；
 		// 也可以填完整 URL（如 https://cdn.example.com/avatar.webp）
