@@ -24,6 +24,14 @@ export const friendsData: FriendItem[] = [
 		siteurl: "https://nahida.im",
 		tags: ["技术", "前端", "后端"],
 	},
+	{
+		id: 2,
+		title: "lenmei233's Blog",
+		imgurl: "https://blog.lenmei233.top/images/avatar.webp",
+		desc: "技术分享与日常记录",
+		siteurl: "https://blog.lenmei233.top",
+		tags: ["技术"],
+	},
 ];
 
 // 获取所有友情链接数据（稳定顺序，测试可复现）
