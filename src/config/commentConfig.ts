@@ -84,29 +84,27 @@ export const commentConfig: CommentConfig = withUserConfig("comment", {
 	waline: {
 		/** 服务端地址（必填）；留空时不渲染评论区 */
 		serverURL: "https://waline.zient.top",
-		/** 完整 UMD 客户端，按需加载；升级时与下面的 CSS 保持同版本 */
-		scriptUrl:
-			"https://cdn.jsdelivr.net/npm/@waline/client@3.16.1/dist/waline.umd.js",
-		/** 客户端样式；同样只在评论区进入视口后加载 */
-		styleUrl:
-			"https://cdn.jsdelivr.net/npm/@waline/client@3.16.1/dist/waline.css",
+		/** 完整 UMD 客户端，同站托管并按需加载；升级时与下面的 CSS 保持同版本 */
+		scriptUrl: "/assets/waline/3.16.1/waline.umd.js",
+		/** 同站客户端样式；只在评论区进入视口后加载，避免依赖公共 CDN */
+		styleUrl: "/assets/waline/3.16.1/waline.css",
 		/** auto 跟随文章/站点语言；也可指定 Waline 语言码，如 zh-CN、en、jp */
 		lang: "zh-CN",
 		/** 可选文案覆盖；省略的字段使用 Waline 当前语言默认值 */
 		locale: {
 			/** 评论输入框提示；空字符串不显示提示 */
-			placeholder: "Share your thoughts...",
+			placeholder: "你想说点什么呢，在这里输入吧...",
 		},
-		/** false 关闭表情，true 使用默认表情；也可混合填写预设 URL 与自定义表情对象 */
-		emoji: true,
+		/** 同站托管默认微博表情包，避免初始化时请求外部表情元数据 */
+		emoji: ["https://blog.zient.top/assets/waline/emojis/1.1.0/weibo"],
 		/** 排序：latest / oldest / hottest */
 		commentSorting: "latest",
 		/** 展示的身份信息字段 */
 		meta: ["nick", "mail", "link"],
-		/** 必填字段；空数组允许匿名评论 */
+		/** 未登录评论时的必填字段；login 为 force 时必须先登录 */
 		requiredMeta: [],
-		/** 登录模式：enable / disable / force */
-		login: "enable",
+		/** 登录模式：force 要求登录后才能评论；服务端需同时设置 LOGIN=force */
+		login: "force",
 		/** 评论字数限制，设置为 0 时无限制 */
 		wordLimit: 0,
 		/** 每页条数 */
@@ -121,8 +119,8 @@ export const commentConfig: CommentConfig = withUserConfig("comment", {
 		noCopyright: false,
 		/** 是否隐藏 RSS 订阅链接 */
 		noRss: true,
-		/** reCAPTCHA v3 密钥 */
-		recaptchaV3Key: "",
+		/** reCAPTCHA v3 网站密钥（公开 Site Key，禁止填写 Secret Key） */
+		recaptchaV3Key: "6LeUUwwuAAAAAGV7c-FLiEN33_7788ZfH8YLa52P",
 		/** Cloudflare Turnstile 密钥 */
 		turnstileKey: "",
 		/** 是否显示文章表情反应 */

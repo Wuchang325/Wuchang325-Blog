@@ -118,7 +118,7 @@ export interface WalineConfig {
 	noCopyright?: boolean;
 	/** 是否隐藏 RSS 订阅链接 */
 	noRss?: boolean;
-	/** reCAPTCHA v3 密钥 */
+	/** reCAPTCHA v3 网站密钥（公开 Site Key，禁止填写 Secret Key） */
 	recaptchaV3Key?: string;
 	/** Cloudflare Turnstile 密钥 */
 	turnstileKey?: string;
