@@ -57,7 +57,7 @@ Supported metadata is `@name`, `@type`, `@default`, `@required`, `@optional`, `@
 
 Use four-colon fences for `field-group` when nesting three-colon `field` blocks. A single `field` can also be used without a group. Unknown or malformed `@tags` are preserved as ordinary description text instead of being discarded. Rendering is SSR-only: the cards add no JavaScript or network requests.
 
-Reference implementation and copyable example: `src/plugins/markdown/manifest.json` and `src/content/posts/markdown-fields.md`.
+Canonical forms and a copyable example are recorded in `src/plugins/markdown/manifest.json`. The site's content directory may omit the theme's demonstration posts.
 
 ## Bilibili 视频
 
