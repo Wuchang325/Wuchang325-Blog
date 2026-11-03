@@ -87,6 +87,12 @@ export const CONFIG_DOMAINS = Object.freeze([
 	},
 	{ key: "fab", file: "fab", type: "FabConfig", module: "@/types/fabConfig" },
 	{
+		key: "mascot",
+		file: "mascot",
+		type: "MascotConfig",
+		module: "@/types/mascotConfig",
+	},
+	{
 		key: "sidebar",
 		file: "sidebar",
 		type: "SidebarConfig",

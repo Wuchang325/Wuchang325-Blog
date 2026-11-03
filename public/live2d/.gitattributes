@@ -1,0 +1,4 @@
+# Preserve the exact bytes of compiled models, atlases and pinned third-party Core.
+*.moc3 -text
+*.png -text
+vendor/*.js -text

@@ -1,0 +1,55 @@
+---
+import Icon from "@components/atoms/display/Icon.svelte";
+import { url } from "@utils/url-utils";
+import { mascotModel } from "@/data/mascot";
+import type { ResolvedMascotOptions } from "@/types/mascotConfig";
+import { mascotLabels } from "@/utils/mascot/labels";
+
+interface Props { options: ResolvedMascotOptions; }
+const { options } = Astro.props;
+const model = mascotModel;
+const valid = model?.id && model.name && model.canvasWidth > 0 && model.canvasHeight > 0 && /^(\/(?!\/)|https?:\/\/)/i.test(model.modelUrl);
+const labels = mascotLabels(model?.name ?? "");
+const assetUrl = (value: string) => /^https?:\/\//i.test(value) ? value : url(value);
+const clientOptions = valid ? { ...options, coreUrl: assetUrl(options.coreUrl), model: { ...model, modelUrl: assetUrl(model.modelUrl) } } : null;
+// Keep feature CSS out of Astro's shared stylesheet graph when disabled.
+// Native delegated buttons compose Icon without hydrating an island or
+// hoisting an otherwise-unused IconButton stylesheet into disabled pages.
+const styles = `
+.shirone-mascot { position:fixed; inset-inline-start:var(--m3e-space-4); bottom:0; z-index:40; display:block; width:var(--mascot-width); pointer-events:none; font:var(--m3e-type-label-medium); }
+.shirone-mascot[hidden], .shirone-mascot [hidden] { display:none; }
+.shirone-mascot .mascot-stage { position:relative; width:var(--mascot-width); height:var(--mascot-height); overflow:hidden; }
+.shirone-mascot canvas { display:block; width:100%; height:100%; pointer-events:none; }
+.shirone-mascot .mascot-avatar { position:absolute; inset:0; width:100%; height:100%; padding:0; border:0; background:transparent; cursor:pointer; pointer-events:auto; clip-path:polygon(26% 0,74% 0,94% 48%,100% 100%,0 100%,6% 48%); }
+.shirone-mascot .mascot-avatar:focus-visible { outline:0; box-shadow:inset 0 0 0 var(--m3e-space-1) var(--primary); }
+.shirone-mascot .mascot-tools { position:absolute; bottom:calc(100% - var(--m3e-space-1)); inset-inline-start:50%; transform:translateX(-50%); display:flex; align-items:center; gap:var(--m3e-space-1); padding:var(--m3e-space-1); border:1px solid var(--outline-variant); border-radius:var(--shape-corner-l); background:var(--surface-container); color:var(--on-surface); opacity:0; visibility:hidden; pointer-events:none; transition:opacity var(--m3e-duration-short) var(--m3e-easing-standard); }
+.shirone-mascot:hover .mascot-tools, .shirone-mascot:focus-within .mascot-tools, .shirone-mascot[data-state="loading"] .mascot-tools, .shirone-mascot[data-state="error"] .mascot-tools { opacity:1; visibility:visible; pointer-events:auto; }
+.shirone-mascot .mascot-button { position:relative; display:inline-flex; justify-content:center; align-items:center; gap:var(--m3e-space-2); min-width:var(--m3e-space-10); min-height:var(--m3e-space-10); padding:var(--m3e-space-2); border:0; border-radius:var(--shape-corner-m); background:transparent; color:var(--on-surface); cursor:pointer; pointer-events:auto; font:inherit; --m3e-state-color:var(--on-surface); }
+.shirone-mascot .mascot-button:disabled { opacity:.38; cursor:default; pointer-events:none; }
+.shirone-mascot .mascot-button:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+.shirone-mascot .mascot-button svg { width:var(--m3e-space-5); height:var(--m3e-space-5); }
+.shirone-mascot .mascot-message { margin:0 0 var(--m3e-space-4); padding:var(--m3e-space-3); background:var(--surface-container); color:var(--on-surface); border:1px solid var(--outline-variant); border-radius:var(--shape-corner-m); text-align:center; pointer-events:auto; }
+.shirone-mascot[data-state="collapsed"] { bottom:var(--m3e-space-6); width:auto; }
+.shirone-mascot .mascot-restore { background:var(--surface-container); border:1px solid var(--outline-variant); }
+@media(prefers-reduced-motion:reduce) { .shirone-mascot .mascot-tools { transition:none; } }
+html.motion-reduced .shirone-mascot .mascot-tools { transition:none; }
+`;
+---
+{clientOptions && <>
+  <style is:inline set:html={styles} />
+  <shirone-mascot class="shirone-mascot" role="complementary" aria-label={labels.landmark} data-options={JSON.stringify(clientOptions)} hidden>
+    <div class="mascot-stage" data-mascot-stage hidden>
+      <button type="button" class="mascot-avatar" data-mascot-action="interact" aria-label={labels.interact} title={labels.interact}></button>
+    </div>
+    <div class="mascot-tools" data-mascot-tools role="group" aria-label={labels.controls}>
+      <button type="button" class="mascot-button m3-state-layer" data-mascot-action="smaller" aria-label={labels.smaller} title={labels.smaller}><Icon icon="material-symbols:remove-rounded" /></button>
+      <button type="button" class="mascot-button m3-state-layer" data-mascot-action="larger" aria-label={labels.larger} title={labels.larger}><Icon icon="material-symbols:add-rounded" /></button>
+      <button type="button" class="mascot-button m3-state-layer" data-mascot-action="hide" aria-label={labels.hide} title={labels.hide}><Icon icon="material-symbols:close-rounded" /></button>
+    </div>
+    <div class="mascot-message" data-mascot-message role="status"><span data-mascot-status>{labels.loading}</span> <button type="button" class="mascot-button m3-state-layer" data-mascot-action="retry" hidden>{labels.retry}</button></div>
+    <button type="button" class="mascot-button mascot-restore m3-state-layer" data-mascot-action="restore" aria-label={labels.restore} title={labels.restore} hidden><Icon icon="material-symbols:person-rounded" /><span>{model.name}</span></button>
+  </shirone-mascot>
+</>}
+<script>
+  import "@/utils/mascot/controller";
+</script>

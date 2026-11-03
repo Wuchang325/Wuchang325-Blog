@@ -13,11 +13,13 @@ import { createDefaultSchemeStyle } from "@utils/theme-utils";
 import { pathsEqual, toAbsoluteUrl, url } from "@utils/url-utils";
 import {
 	expressiveCodeConfig,
+	mascotConfig,
 	profileConfig,
 	resolveConstellationOptions,
 	resolveCursorOptions,
 	resolvedFontOptions,
 	resolveMouseEffectOptions,
+	resolveMascotOptions,
 	resolveTextureOptions,
 	resolveUmamiOptions,
 	siteConfig,
@@ -117,6 +119,10 @@ const musicOptions = resolveMusicOptions(musicConfig);
 const musicEnabled = musicOptions !== null;
 const musicFormDefault = musicOptions?.form ?? "top";
 const umamiOptions = resolveUmamiOptions(umamiConfig);
+const mascotOptions = resolveMascotOptions(mascotConfig);
+const Mascot = mascotOptions
+	? (await import("@components/organisms/mascot/Mascot.astro")).default
+	: null;
 
 const hasDesktopBanner = hasBannerImages(siteConfig.banner.src.desktop);
 const hasMobileBanner = hasBannerImages(siteConfig.banner.src.mobile);
@@ -303,6 +309,7 @@ const defaultSchemeStyle = createDefaultSchemeStyle();
 		)}
 		{/* 悬浮音乐条要挂在 body 层：放进 #main-layout（z-30）会被横幅盖住 */}
 		{musicEnabled && <MusicFloatingWidget />}
+		{Mascot && mascotOptions && <Mascot options={mascotOptions} />}
 		<Snackbar client:only="svelte"></Snackbar>
 		{languageNoticeEnabled && <LanguageNotice client:only="svelte" />}
 		<slot />

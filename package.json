@@ -97,6 +97,7 @@
 		"oddmisc": "^1.2.11",
 		"overlayscrollbars": "^2.16.0",
 		"pagefind": "^1.5.2",
+		"pixi.js": "8.22.0",
 		"qrcode": "^1.5.4",
 		"reading-time": "^1.5.0",
 		"rehype-autolink-headings": "^7.1.0",
@@ -118,6 +119,7 @@
 		"typescript": "^6.0.3",
 		"unified": "11.0.5",
 		"unist-util-visit": "^5.1.0",
+		"untitled-pixi-live2d-engine": "1.4.0",
 		"yaml": "^2.9.1"
 	},
 	"devDependencies": {

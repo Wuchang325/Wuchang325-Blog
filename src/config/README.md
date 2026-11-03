@@ -111,6 +111,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 | 文件 | 职责 |
 | --- | --- |
 | `footerConfig.ts` | 页脚自定义 HTML 注入开关（控制是否读取并注入 `src/config/FooterConfig.html`，关闭时零开销） |
+| `mascotConfig.ts` | 可选 Live2D 看板娘：总开关、固定 Core 地址、桌面条件、尺寸与跟随；本站显式开启，未配置时关闭。模型资料在 `src/data/mascot.ts`，支持 `config/mascot.yaml` 覆盖；详见 `docs/mascot.md` |
 | `siteConfig.ts` | 站点部署 URL / base 路径 / 标题标识 / 语言 / IANA 时区 / HCT 主题色 / 背景纹理系统 / 显示设置浮层开关 / 横幅 / TOC 深度 / 进度条 / favicon（含 `getDefaultStyle` / `getDefaultSpec` / `resolveDisplaySettings` 回退值） |
 | `profileConfig.ts` | 博主资料：头像 / 名称 / 简介 / 社交链接 |
 | `licenseConfig.ts` | 文章版权声明（全站默认；单篇可用 frontmatter `license` 覆写） |

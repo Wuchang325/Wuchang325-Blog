@@ -1,0 +1,20 @@
+{
+  "name": "伊蕾娜",
+  "model": "LSS.model3.json",
+  "texture": "LSS.4096/texture_00.png",
+  "operation": "Clear alpha of the isolated table region; keep all RGB channels, other pixels and UV coordinates unchanged.",
+  "width": 4096,
+  "height": 2048,
+  "region": {
+    "left": 2540,
+    "top": 1356,
+    "width": 1126,
+    "height": 674
+  },
+  "removedPixels": 234729,
+  "changedOutsideRegion": 0,
+  "changedRgbChannels": 0,
+  "sourceTextureSha256": "ede4bdbe8d638cc2deaf3b1d04f32e75016e030510354538d800fd3e473c1599",
+  "outputTextureSha256": "0ca7ba2762aa242e7ad640d2fc3b208212c88eed2662b5b49c7c8944e79fa626",
+  "note": "Visual removal only. The moc3 mesh is unchanged. Original attribution files are retained."
+}

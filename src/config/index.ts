@@ -49,6 +49,7 @@ export {
 } from "./imageBloomConfig";
 export { licenseConfig } from "./licenseConfig";
 export { llmsConfig } from "./llmsConfig";
+export { mascotConfig, resolveMascotOptions } from "./mascotConfig";
 export { momentsConfig } from "./momentsConfig";
 export {
 	clampMusicVolume,
