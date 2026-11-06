@@ -4,7 +4,12 @@ import {
 	Live2DModel,
 	Live2DPlugin,
 } from "untitled-pixi-live2d-engine/cubism";
-import type { MascotModel, MascotSize } from "@/types/mascotConfig";
+import type {
+	MascotModel,
+	MascotParameter,
+	MascotSize,
+} from "@/types/mascotConfig";
+import { createElainaGreeting, elainaGreetingMs } from "./elaina-greeting";
 
 extensions.add(Live2DPlugin);
 
@@ -13,7 +18,8 @@ export interface MascotRenderer {
 	setPaused(paused: boolean): void;
 	setReducedMotion(reduced: boolean): void;
 	focus(x: number, y: number): void;
-	interact(): void;
+	setPose(pose: readonly MascotParameter[] | undefined, greet?: boolean): void;
+	cancelGreeting(): void;
 	destroy(): void;
 }
 
@@ -51,15 +57,16 @@ export async function createMascotRenderer(
 	let destroyed = false;
 	let paused = true;
 	let reduced = false;
-	let expressionIndex = -1;
-	let nextExpression = 0;
-	let expressionTimer: ReturnType<typeof setTimeout> | undefined;
+	let pose: readonly MascotParameter[] | undefined;
+	let poseStartedAt = 0;
+	let greetingStartedAt = Number.NEGATIVE_INFINITY;
+	let greeting: ReturnType<typeof createElainaGreeting>;
 
 	const releaseUrl = (objectUrl: string) => URL.revokeObjectURL(objectUrl);
 	const destroy = () => {
 		if (destroyed) return;
 		destroyed = true;
-		clearTimeout(expressionTimer);
+		greeting?.destroy();
 		if (model && !model.destroyed) model.destroy();
 		if (app.renderer) app.destroy(true, { children: true });
 		for (const objectUrl of objectUrls) {
@@ -82,6 +89,19 @@ export async function createMascotRenderer(
 		objectUrls.push(objectUrl);
 		return objectUrl;
 	};
+	const loadGreeting = async (base: string): Promise<string | undefined> => {
+		if (profile.greetingArt !== "elaina") return undefined;
+		try {
+			const paintingUrl = await fetchBlob("greeting-arm.webp", base);
+			const painting = new Image();
+			painting.src = paintingUrl;
+			await painting.decode();
+			return paintingUrl;
+		} catch {
+			// The base model and its expressions still work if the art is unavailable.
+			return undefined;
+		}
+	};
 
 	try {
 		attempt.signal.throwIfAborted();
@@ -100,10 +120,11 @@ export async function createMascotRenderer(
 			throw new Error("Invalid model settings");
 		}
 		const base = response.url;
-		const [moc, textures, physicsUrl] = await Promise.all([
+		const [moc, textures, physicsUrl, greetingUrl] = await Promise.all([
 			fetchBlob(files.Moc, base),
 			Promise.all(files.Textures.map((file) => fetchBlob(file, base))),
 			files.Physics ? fetchBlob(files.Physics, base) : undefined,
+			loadGreeting(base),
 		]);
 		textureUrls.push(...textures);
 		settings.url = base;
@@ -173,20 +194,46 @@ export async function createMascotRenderer(
 			{ signal },
 		);
 		host.prepend(app.canvas);
+		if (greetingUrl) {
+			const art = createElainaGreeting(app.canvas, raw.drawables, greetingUrl);
+			if (art) {
+				greeting = art;
+				const draw = internal.draw.bind(internal);
+				internal.draw = (gl) => {
+					art.draw(performance.now() - greetingStartedAt, () => draw(gl));
+				};
+			}
+		}
 		internal.on("beforeModelUpdate", () => {
 			if (reduced) {
 				defaults.forEach((value, index) => {
 					core.setParameterValueByIndex(index, value);
 				});
 			}
-			profile.expressions.forEach((expression, index) => {
-				const parameter = indices.get(expression.parameter);
-				if (parameter !== undefined)
-					core.setParameterValueByIndex(
-						parameter,
-						index === expressionIndex ? expression.value : defaults[parameter],
-					);
-			});
+			if (!pose) return;
+			const elapsed = performance.now() - poseStartedAt;
+			for (const parameter of pose) {
+				const index = indices.get(parameter.parameter);
+				if (index === undefined) continue;
+				if ("pulse" in parameter) {
+					const { amplitude, durationMs } = parameter.pulse;
+					if (!reduced && elapsed < durationMs) {
+						const envelope = Math.sin((elapsed / durationMs) * Math.PI);
+						core.addParameterValueByIndex(index, amplitude * envelope ** 2);
+					}
+					continue;
+				}
+				const { value, oscillation } = parameter;
+				let offset = 0;
+				if (!reduced && oscillation && elapsed < oscillation.durationMs) {
+					const progress = elapsed / oscillation.durationMs;
+					offset =
+						oscillation.amplitude *
+						Math.sin(progress * 4 * Math.PI) *
+						(1 - progress);
+				}
+				core.setParameterValueByIndex(index, value + offset);
+			}
 		});
 		app.ticker.maxFPS = 30;
 		app.ticker.add((ticker) => avatar.update(Math.min(ticker.deltaMS, 50)));
@@ -209,6 +256,7 @@ export async function createMascotRenderer(
 			app.renderer.resize(width, nextSize + 16);
 			avatar.scale.set(nextSize / profile.canvasHeight);
 			avatar.position.set(12, 16);
+			greeting?.resize(nextSize);
 			renderOnce();
 		};
 		resize(size);
@@ -220,6 +268,7 @@ export async function createMascotRenderer(
 			},
 			setReducedMotion(value) {
 				reduced = value;
+				if (value) greetingStartedAt = Number.NEGATIVE_INFINITY;
 				internal.physics = value ? undefined : physics;
 				internal.eyeBlink = value ? undefined : blink;
 				if (value) internal.focusController.focus(0, 0, true);
@@ -229,15 +278,20 @@ export async function createMascotRenderer(
 				if (!destroyed && !paused && !reduced)
 					internal.focusController.focus(x, y);
 			},
-			interact() {
-				if (destroyed || !profile.expressions.length) return;
-				expressionIndex = nextExpression++ % profile.expressions.length;
-				clearTimeout(expressionTimer);
-				renderOnce();
-				expressionTimer = setTimeout(() => {
-					expressionIndex = -1;
-					renderOnce();
-				}, 2000);
+			setPose(value, greet = false) {
+				pose = value;
+				poseStartedAt = performance.now();
+				if (
+					greet &&
+					greeting &&
+					!reduced &&
+					poseStartedAt - greetingStartedAt >= elainaGreetingMs
+				)
+					greetingStartedAt = poseStartedAt;
+				if (paused || reduced) renderOnce();
+			},
+			cancelGreeting() {
+				greetingStartedAt = Number.NEGATIVE_INFINITY;
 			},
 			destroy,
 		};

@@ -1,5 +1,6 @@
 <script lang="ts">
 import AccentBar from "@components/atoms/display/AccentBar.svelte";
+import SiteIcon from "@components/atoms/display/Icon.svelte";
 import PanelStack from "@components/atoms/display/PanelStack.svelte";
 import SegmentedButton from "@components/atoms/selection/SegmentedButton.svelte";
 import Slider from "@components/atoms/selection/Slider.svelte";
@@ -81,6 +82,9 @@ let dark = $state(
 );
 
 let motionReduced = $state(false);
+let mascotLabel = $state("");
+let mascotEnabled = $state(true);
+let mascot: HTMLElement | null = null;
 // 九宫格色卡在面板首次打开前不计算（9 次配色解算只在用户真正查看时发生）
 let panelOpened = $state(false);
 
@@ -154,6 +158,18 @@ const textureOptions: {
 
 // 明暗切换时重算色卡（LightDarkSwitch 改 <html> 的 class）
 onMount(() => {
+	mascot = document.querySelector<HTMLElement>("shirone-mascot");
+	const syncMascot = () => {
+		mascotLabel = mascot?.dataset.settingLabel ?? "";
+		mascotEnabled = mascot?.dataset.preference !== "off";
+	};
+	const mascotObserver = mascot && new MutationObserver(syncMascot);
+	if (mascot && mascotObserver)
+		mascotObserver.observe(mascot, {
+			attributes: true,
+			attributeFilter: ["data-setting-label", "data-preference"],
+		});
+	syncMascot();
 	const observer = new MutationObserver(() => {
 		dark = document.documentElement.classList.contains("dark");
 	});
@@ -167,6 +183,7 @@ onMount(() => {
 		if (panel?.classList.contains("float-panel-closed")) return;
 		panelOpened = true;
 		panelObserver.disconnect();
+		mascotObserver?.disconnect();
 	});
 	if (panel && !panel.classList.contains("float-panel-closed"))
 		panelOpened = true;
@@ -181,6 +198,12 @@ onMount(() => {
 	};
 });
 
+function setMascotEnabled(enabled: boolean) {
+	mascot?.dispatchEvent(
+		new CustomEvent("shirone:mascot-preference", { detail: enabled }),
+	);
+}
+
 /** 完整重置：色相 / 配色风格 / Color Spec / 列表布局 / 背景纹理 全部还原为站点默认（点击即生效，无确认弹窗） */
 function confirmReset() {
 	hue = defaultHue;
@@ -194,6 +217,7 @@ function confirmReset() {
 	mouseEffectEnabled = defaultMouseEffectEnabled;
 	constellationEnabled = defaultConstellationEnabled;
 	musicForm = defaultMusicForm;
+	if (mascotLabel && !mascotEnabled) setMascotEnabled(true);
 }
 
 /** 是否有可重置的偏离（控制 Reset 按钮可见性） */
@@ -208,7 +232,8 @@ const isDirty = $derived(
 		cursorEnabled !== defaultCursorEnabled ||
 		mouseEffectEnabled !== defaultMouseEffectEnabled ||
 		constellationEnabled !== defaultConstellationEnabled ||
-		musicForm !== defaultMusicForm,
+		musicForm !== defaultMusicForm ||
+		(!!mascotLabel && !mascotEnabled),
 );
 
 $effect(() => {
@@ -444,7 +469,7 @@ const stylePreviews = $derived(
         {/if}
 
         <!-- 段三：动效与体验 -->
-        {#if displayConfig.reduceMotion || displayConfig.cursor || displayConfig.mouseEffect || displayConfig.constellation}
+        {#if displayConfig.reduceMotion || displayConfig.cursor || displayConfig.mouseEffect || displayConfig.constellation || mascotLabel}
             <div class="p-4 flex flex-col gap-3">
                 {#if displayConfig.reduceMotion}
                     <div class="flex items-center justify-between">
@@ -483,6 +508,16 @@ const stylePreviews = $derived(
                             <span class="text-sm font-bold text-[var(--on-surface)]">{i18n(I18nKey.constellation)}</span>
                         </div>
                         <Switch bind:checked={constellationEnabled} label={i18n(I18nKey.constellation)} icons />
+                    </div>
+                {/if}
+
+                {#if mascotLabel}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <SiteIcon icon="material-symbols:person-rounded" class="text-lg text-[var(--primary)]" />
+                            <span class="text-sm font-bold text-[var(--on-surface)]">{mascotLabel}</span>
+                        </div>
+                        <Switch bind:checked={() => mascotEnabled, setMascotEnabled} label={mascotLabel} icons />
                     </div>
                 {/if}
             </div>

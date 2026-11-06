@@ -16,13 +16,15 @@ const clientOptions = valid ? { ...options, coreUrl: assetUrl(options.coreUrl), 
 // Native delegated buttons compose Icon without hydrating an island or
 // hoisting an otherwise-unused IconButton stylesheet into disabled pages.
 const styles = `
-.shirone-mascot { position:fixed; inset-inline-start:var(--m3e-space-4); bottom:0; z-index:40; display:block; width:var(--mascot-width); pointer-events:none; font:var(--m3e-type-label-medium); }
+.shirone-mascot { position:fixed; inset-inline-start:calc(var(--m3e-space-4) + var(--mascot-start-offset, 0px)); bottom:0; z-index:40; display:block; width:var(--mascot-width); pointer-events:none; font:var(--m3e-type-label-medium); }
 .shirone-mascot[hidden], .shirone-mascot [hidden] { display:none; }
 .shirone-mascot .mascot-stage { position:relative; width:var(--mascot-width); height:var(--mascot-height); overflow:hidden; }
 .shirone-mascot canvas { display:block; width:100%; height:100%; pointer-events:none; }
 .shirone-mascot .mascot-avatar { position:absolute; inset:0; width:100%; height:100%; padding:0; border:0; background:transparent; cursor:pointer; pointer-events:auto; clip-path:polygon(26% 0,74% 0,94% 48%,100% 100%,0 100%,6% 48%); }
 .shirone-mascot .mascot-avatar:focus-visible { outline:0; box-shadow:inset 0 0 0 var(--m3e-space-1) var(--primary); }
 .shirone-mascot .mascot-tools { position:absolute; bottom:calc(100% - var(--m3e-space-1)); inset-inline-start:50%; transform:translateX(-50%); display:flex; align-items:center; gap:var(--m3e-space-1); padding:var(--m3e-space-1); border:1px solid var(--outline-variant); border-radius:var(--shape-corner-l); background:var(--surface-container); color:var(--on-surface); opacity:0; visibility:hidden; pointer-events:none; transition:opacity var(--m3e-duration-short) var(--m3e-easing-standard); }
+.shirone-mascot .mascot-dialogue { position:absolute; bottom:calc(100% + var(--m3e-space-10) + var(--m3e-space-3)); inset-inline:0; width:max-content; max-width:100%; margin-inline:auto; text-align:center; font:var(--m3e-type-body-medium); }
+.shirone-mascot .mascot-dialogue:not(:empty) { padding:var(--m3e-space-2) var(--m3e-space-3); border:1px solid var(--outline-variant); border-radius:var(--shape-corner-m); background:var(--surface-container-high); color:var(--on-surface); }
 .shirone-mascot:hover .mascot-tools, .shirone-mascot:focus-within .mascot-tools, .shirone-mascot[data-state="loading"] .mascot-tools, .shirone-mascot[data-state="error"] .mascot-tools { opacity:1; visibility:visible; pointer-events:auto; }
 .shirone-mascot .mascot-button { position:relative; display:inline-flex; justify-content:center; align-items:center; gap:var(--m3e-space-2); min-width:var(--m3e-space-10); min-height:var(--m3e-space-10); padding:var(--m3e-space-2); border:0; border-radius:var(--shape-corner-m); background:transparent; color:var(--on-surface); cursor:pointer; pointer-events:auto; font:inherit; --m3e-state-color:var(--on-surface); }
 .shirone-mascot .mascot-button:disabled { opacity:.38; cursor:default; pointer-events:none; }
@@ -38,6 +40,7 @@ html.motion-reduced .shirone-mascot .mascot-tools { transition:none; }
 {clientOptions && <>
   <style is:inline set:html={styles} />
   <shirone-mascot class="shirone-mascot" role="complementary" aria-label={labels.landmark} data-options={JSON.stringify(clientOptions)} hidden>
+    <div class="mascot-dialogue" data-mascot-dialogue role="status"></div>
     <div class="mascot-stage" data-mascot-stage hidden>
       <button type="button" class="mascot-avatar" data-mascot-action="interact" aria-label={labels.interact} title={labels.interact}></button>
     </div>

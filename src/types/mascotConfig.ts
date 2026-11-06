@@ -20,6 +20,22 @@ export interface ResolvedMascotOptions {
 	followPointer: boolean;
 }
 
+export type MascotReaction = "tap" | "wink" | "shy" | "flustered" | "like";
+
+export type MascotParameter = {
+	parameter: string;
+} & (
+	| {
+			value: number;
+			/** 两次逐渐减弱的摆动。减少动态效果时仅应用 value。 */
+			oscillation?: { amplitude: number; durationMs: number };
+	  }
+	| {
+			/** 从模型当前姿势短暂偏移后归位。减少动态效果时跳过。 */
+			pulse: { amplitude: number; durationMs: number };
+	  }
+);
+
 /** 模型内容资料；不同模型的参数范围需要独立验证。 */
 export interface MascotModel {
 	id: string;
@@ -27,7 +43,10 @@ export interface MascotModel {
 	modelUrl: string;
 	canvasWidth: number;
 	canvasHeight: number;
-	expressions: { parameter: string; value: number }[];
+	expressions: MascotParameter[];
+	reactions?: Partial<Record<MascotReaction, MascotParameter[]>>;
+	/** 为指定模型绘制的问候手臂图层。 */
+	greetingArt?: "elaina";
 }
 
 export interface MascotClientOptions extends ResolvedMascotOptions {

@@ -370,6 +370,12 @@ export function shirones(options: ShironesOptions = {}): AstroIntegration {
 					integrations,
 					markdown: { processor: processor as never },
 					vite: {
+						// Astro also starts a temporary Vite server during content
+						// sync. Its production optimizer must not replace dev chunks
+						// that an open browser tab is still importing.
+						...(command === "sync" || command === "build"
+							? { cacheDir: join(paths.cacheDir, "vite-build") }
+							: {}),
 						resolve: {
 							alias: createAliases(paths),
 							// Layout.astro resolves the default color scheme at build
